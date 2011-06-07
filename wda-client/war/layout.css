@@ -1,0 +1,31 @@
+body {
+    margin: 0px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.page {
+    width: 100%;
+    min-width: 960px;
+}
+
+#left_wrapper {
+    min-width: 250px;
+    max-width: 250px;
+    width: 250px;
+    float: left;
+    height: 600px;
+}
+
+#details_panel {
+    height: 400px;
+}
+#master_panel {
+    height: 150px;
+}
+
+#leaf_table_wrapper {
+    height: 540px;
+    overflow: scroll;
+    overflow-x: hidden;
+}
