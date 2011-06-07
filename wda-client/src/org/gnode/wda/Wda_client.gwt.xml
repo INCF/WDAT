@@ -20,5 +20,5 @@
   <source path='client'/>
   <source path='interfaces'/>
   <source path='selector'/>
-
+  <source path='events'/>
 </module>

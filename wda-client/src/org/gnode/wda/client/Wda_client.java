@@ -10,5 +10,6 @@ public class Wda_client implements EntryPoint {
 		AppController ac = new AppController(eventBus);
 		
 		ac.setupUI();
+		ac.setupEvents();
 	}
 }

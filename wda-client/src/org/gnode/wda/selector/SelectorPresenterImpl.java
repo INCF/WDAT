@@ -4,12 +4,17 @@ import org.gnode.wda.interfaces.SelectorNodesDisplay;
 import org.gnode.wda.interfaces.SelectorPresenter;
 import org.gnode.wda.interfaces.SelectorTreeDisplay;
 
+import com.google.gwt.event.shared.HandlerManager;
+
 public class SelectorPresenterImpl implements SelectorPresenter {
 	SelectorNodesDisplay nodes;
 	SelectorTreeDisplay tree;
+	HandlerManager eventBus;
 	
-	public SelectorPresenterImpl(SelectorNodesDisplay nodes,
+	public SelectorPresenterImpl(HandlerManager eventBus,
+			SelectorNodesDisplay nodes,
 			SelectorTreeDisplay tree) {
+		this.eventBus = eventBus;
 		this.nodes = nodes;
 		this.tree = tree;
 	}

@@ -15,6 +15,7 @@ body {
     width: 250px;
     float: left;
     height: 600px;
+    margin-right: 5px;
 }
 
 #details_panel {
