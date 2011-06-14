@@ -1,15 +1,15 @@
 package org.gnode.wda.client;
 
 import org.gnode.wda.interfaces.SelectorPresenter;
-import org.gnode.wda.selector.SelectorNodesDisplayImpl;
+import org.gnode.wda.selector.LeavesViewImpl;
+import org.gnode.wda.selector.NEOExplorerImpl;
 import org.gnode.wda.selector.SelectorPresenterImpl;
-import org.gnode.wda.selector.SelectorTreeDisplayImpl;
-import org.gnode.wda.events.SelectorPopupHandler;
-import org.gnode.wda.events.SelectorPopupTrigger;
+import org.gnode.wda.events.ContainerSelectedEvent;
+import org.gnode.wda.events.ContainerSelectedHandler;
+import org.gnode.wda.events.ExplorerInvocationEvent;
+import org.gnode.wda.events.ExplorerInvocationHandler;
 
 import com.google.gwt.event.shared.HandlerManager;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -22,17 +22,19 @@ public class AppController {
 	public AppController(HandlerManager eventBus) {
 		this.eventBus = eventBus;
 		this.selPresenter = new SelectorPresenterImpl(
-											eventBus,
-											new SelectorNodesDisplayImpl(eventBus),
-											new SelectorTreeDisplayImpl(eventBus)
-											);
+								new LeavesViewImpl(eventBus),
+								new NEOExplorerImpl(eventBus),
+								eventBus
+								);
 	}
 	
 	public void setupUI() {
-		RootPanel.get(nodesID).add((Widget)this.selPresenter.getNodesDisplay());
+		RootPanel.get(nodesID).add((Widget)this.selPresenter.getLeavesView());
 	}
 	
 	public void setupEvents() {
-		this.eventBus.addHandler(SelectorPopupTrigger.TYPE, new SelectorPopupHandler(new PopupPanel()));
+		this.eventBus.addHandler(ExplorerInvocationEvent.TYPE, (ExplorerInvocationHandler)selPresenter);
+		this.eventBus.addHandler(ContainerSelectedEvent.TYPE, (ContainerSelectedHandler)selPresenter);
+		this.eventBus.fireEvent(new ExplorerInvocationEvent());
 	}
 }

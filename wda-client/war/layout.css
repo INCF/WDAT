@@ -27,6 +27,25 @@ body {
 
 #leaf_table_wrapper {
     height: 540px;
-    overflow: scroll;
+    overflow: auto;
     overflow-x: hidden;
+}
+
+#explorer_breadcrumbs {
+    height: 35px;
+    border-bottom: 1px solid gray;
+}
+
+#explorer_level2-wrapper {
+    width: 100%;
+}
+
+#explorer_level2_tree {
+    width: 200px;
+    float: left;
+}
+
+#explorer_level2_preview {
+    width: 200px;
+    float: right;
 }

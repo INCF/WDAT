@@ -1,0 +1,18 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:gh="urn:import:org.gnode.wda.selector">
+	<ui:style>
+		.important {
+			font-weight: bold;
+		}
+	</ui:style>
+	<g:HTMLPanel>
+		<div id="explorer_breadcrumbs">
+		<g:Button styleName="{style.important}" ui:field="button" />
+		</div>
+		<div id="explorer_level2_wrapper">
+			<g:SplitLayoutPanel styleName="explorer_wrapper" ui:field="explorerWrapper"></g:SplitLayoutPanel>	
+		</div>
+	</g:HTMLPanel>
+</ui:UiBinder> 
