@@ -9,10 +9,11 @@
 	</ui:style>
 	<g:HTMLPanel>
 		<div id="explorer_breadcrumbs">
-		<g:Button styleName="{style.important}" ui:field="button" />
+		<gh:BreadcrumbWidget ui:field="breadcrumb"></gh:BreadcrumbWidget>
 		</div>
 		<div id="explorer_level2_wrapper">
 			<g:SplitLayoutPanel styleName="explorer_wrapper" ui:field="explorerWrapper"></g:SplitLayoutPanel>	
 		</div>
+		<g:Button styleName="{style.important}" ui:field="button" />
 	</g:HTMLPanel>
 </ui:UiBinder> 

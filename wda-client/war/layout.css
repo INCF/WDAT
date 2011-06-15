@@ -1,7 +1,5 @@
 body {
     margin: 0px;
-    margin-left: 5px;
-    margin-right: 5px;
 }
 
 .page {
@@ -9,43 +7,3 @@ body {
     min-width: 960px;
 }
 
-#left_wrapper {
-    min-width: 250px;
-    max-width: 250px;
-    width: 250px;
-    float: left;
-    height: 600px;
-    margin-right: 5px;
-}
-
-#details_panel {
-    height: 400px;
-}
-#master_panel {
-    height: 150px;
-}
-
-#leaf_table_wrapper {
-    height: 540px;
-    overflow: auto;
-    overflow-x: hidden;
-}
-
-#explorer_breadcrumbs {
-    height: 35px;
-    border-bottom: 1px solid gray;
-}
-
-#explorer_level2-wrapper {
-    width: 100%;
-}
-
-#explorer_level2_tree {
-    width: 200px;
-    float: left;
-}
-
-#explorer_level2_preview {
-    width: 200px;
-    float: right;
-}
