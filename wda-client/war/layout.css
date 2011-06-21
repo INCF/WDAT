@@ -7,3 +7,15 @@ body {
     min-width: 960px;
 }
 
+.explorer-icon-wrap {
+    display: inline-block;
+    margin: 10px;
+    width: 150px;
+    padding: 5px;
+    text-align: center;
+}
+
+.explorer-icon-selected {
+    background-color: #ddd;
+    border-radius: 5px;
+}

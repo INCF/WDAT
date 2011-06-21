@@ -6,10 +6,13 @@ import org.gnode.wda.data.FakeSelectorDataSource;
 import org.gnode.wda.data.NEObject;
 import org.gnode.wda.events.ExplorerTreeSelectionEvent;
 import org.gnode.wda.events.ExplorerTreeSelectionHandler;
+import org.gnode.wda.events.PlottableSelectionEvent;
 import org.gnode.wda.interfaces.DataSource;
 import org.gnode.wda.interfaces.ExplorerPresenter;
 import org.gnode.wda.interfaces.ExplorerView;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.HandlerManager;
@@ -33,11 +36,26 @@ public class Explorer implements ExplorerPresenter, ExplorerTreeSelectionHandler
 		this.main = new MainWidget();
 		this.tree = new TreeWidget(ds);
 		this.dumbView = new ExplorerViewWidget(this.breads, this.tree, this.main);
-		
-		this.setupEvents();
+
+		this.setupEventTriggers();
+		this.setupEventHandlers();
 	}
 
-	public void setupEvents() {
+	public void setupEventTriggers() {
+		for (final NeoIcon icon : this.main.getChildren()) {
+			icon.setClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					if ( icon.getNeo().isPlottable() ) {
+						eventBus.fireEvent(new PlottableSelectionEvent(icon.getNeo()));
+					} else {
+						localBus.fireEvent(new ExplorerTreeSelectionEvent(icon.getNeo()));
+					}
+				}
+			});
+		}
+	}
+	public void setupEventHandlers() {
 		this.localBus.addHandler(ExplorerTreeSelectionEvent.TYPE, this);
 		
 		this.tree.t.addSelectionHandler(new SelectionHandler<TreeItem>(){
@@ -46,7 +64,6 @@ public class Explorer implements ExplorerPresenter, ExplorerTreeSelectionHandler
 				NEObject selectedNEO = ds.getElementByUID(event.getSelectedItem().getTitle());
 				localBus.fireEvent(new ExplorerTreeSelectionEvent(selectedNEO));
 			}
-			
 		});
 	}
 	
@@ -57,12 +74,14 @@ public class Explorer implements ExplorerPresenter, ExplorerTreeSelectionHandler
 	
 	@Override
 	public void setBreadcrumbs(List<NEObject> path){
-		this.breads.setBreadcrumbs(path);
+		this.breads.setBreadcrumbs(path, this.localBus);
 	}
 
 	@Override
 	public void onExplorerTreeSelection(NEObject selection) {
-		this.breads.setBreadcrumbs(this.ds.getPathOf(selection));
+		this.breads.setBreadcrumbs(this.ds.getPathOf(selection), this.localBus);
 		this.main.setContents(this.ds.getChildrenOf(selection));
+		this.tree.setSelection(selection);
+		this.setupEventTriggers();
 	}
 }

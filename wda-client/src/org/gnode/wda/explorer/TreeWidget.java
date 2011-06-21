@@ -20,7 +20,6 @@ public class TreeWidget extends Composite {
 		main.setAlwaysShowScrollBars(false);
 		this.t = new Tree();
 		this.ds = ds;
-		
 		this.setTreeData();
 		
 		initWidget(main);
@@ -38,5 +37,26 @@ public class TreeWidget extends Composite {
 			node.addItem(create_node(item.name, item.uid, this.ds.getContainerChildrenOf(item)));
 		}
 		return node;
+	}
+
+	public void setSelection(NEObject selection) {
+		int count = this.t.getItemCount();
+		this.t.setSelectedItem(this.t.getSelectedItem(), false);
+		for ( int i = 0; i < count; i++ ) {
+			//_setSelection(selection, this.t.getItem(i));
+		}
+	}
+	
+	@SuppressWarnings("unused")
+	private void _setSelection(NEObject selection, TreeItem ti) {
+		int count = ti.getChildCount();
+		for ( int i = 0 ; i < count ; i++ ) {
+			if (ti.getChild(i).getTitle().equals(selection.uid) ) {
+				ti.getChild(i).setSelected(true);
+				return;
+			} else {
+				_setSelection(selection, ti.getChild(i));
+			}
+		}
 	}
 }
