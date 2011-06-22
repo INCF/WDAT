@@ -2,11 +2,9 @@ package org.gnode.wda.explorer;
 
 import java.util.List;
 
-import org.gnode.wda.data.FakeSelectorDataSource;
 import org.gnode.wda.data.NEObject;
 import org.gnode.wda.events.ExplorerTreeSelectionEvent;
 import org.gnode.wda.events.ExplorerTreeSelectionHandler;
-import org.gnode.wda.events.PlottableSelectionEvent;
 import org.gnode.wda.interfaces.DataSource;
 import org.gnode.wda.interfaces.ExplorerPresenter;
 import org.gnode.wda.interfaces.ExplorerView;
@@ -15,14 +13,11 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.TreeItem;
 
-public class Explorer implements ExplorerPresenter, ExplorerTreeSelectionHandler, ValueChangeHandler<String>{
+public class Explorer implements ExplorerPresenter, ExplorerTreeSelectionHandler{
 	HandlerManager eventBus;
 	HandlerManager localBus;
 	ExplorerView dumbView; // Named dumbview for reminding me.
@@ -42,8 +37,6 @@ public class Explorer implements ExplorerPresenter, ExplorerTreeSelectionHandler
 
 		this.setupEventTriggers();
 		this.setupEventHandlers();
-		
-		History.addValueChangeHandler(this);
 	}
 
 	public void setupEventTriggers() {
@@ -90,10 +83,8 @@ public class Explorer implements ExplorerPresenter, ExplorerTreeSelectionHandler
 	}
 
 	@Override
-	public void onValueChange(ValueChangeEvent<String> event) {
-		if (event.getValue().split(":")[0].equals("explore")) {
-			NEObject neo = this.ds.getElementByUID(event.getValue().split(":")[1]);
-			localBus.fireEvent(new ExplorerTreeSelectionEvent(neo));
-		}
+	public HandlerManager getBus() {
+		// TODO Auto-generated method stub
+		return this.localBus;
 	}
 }

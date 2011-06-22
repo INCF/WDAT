@@ -3,6 +3,7 @@ package org.gnode.wda.client;
 import org.gnode.wda.data.FakeSelectorDataSource;
 import org.gnode.wda.data.NEObject;
 import org.gnode.wda.events.ExplorerInvocationHandler;
+import org.gnode.wda.events.ExplorerTreeSelectionEvent;
 import org.gnode.wda.events.PlottableSelectionEvent;
 import org.gnode.wda.events.PlottableSelectionHandler;
 import org.gnode.wda.explorer.Explorer;
@@ -15,6 +16,7 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.History;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TabPanel;
@@ -60,9 +62,16 @@ public class AppController implements ExplorerInvocationHandler, PlottableSelect
 
 	@Override
 	public void onValueChange(ValueChangeEvent<String> event) {
+		Window.alert(event.getValue());
 		if (event.getValue().startsWith("plot:")) {
 			NEObject neo = this.ds.getElementByUID(event.getValue().split(":")[1]);
 			eventBus.fireEvent(new PlottableSelectionEvent(neo));
 		}
+		if (event.getValue().split(":")[0].equals("explore")) {
+			this.tabs.selectTab(1);
+			NEObject neo = this.ds.getElementByUID(event.getValue().split(":")[1]);
+			this.explorer.getBus().fireEvent(new ExplorerTreeSelectionEvent(neo));
+		}
+	
 	}
 }
