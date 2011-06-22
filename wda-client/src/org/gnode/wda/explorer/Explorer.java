@@ -15,10 +15,14 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerManager;
+import com.google.gwt.user.client.History;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.TreeItem;
 
-public class Explorer implements ExplorerPresenter, ExplorerTreeSelectionHandler{
+public class Explorer implements ExplorerPresenter, ExplorerTreeSelectionHandler, ValueChangeHandler<String>{
 	HandlerManager eventBus;
 	HandlerManager localBus;
 	ExplorerView dumbView; // Named dumbview for reminding me.
@@ -27,11 +31,10 @@ public class Explorer implements ExplorerPresenter, ExplorerTreeSelectionHandler
 	TreeWidget tree;
 	DataSource ds; 
 	
-	public Explorer(HandlerManager eventBus) {
-		this.eventBus = eventBus;
+	public Explorer(DataSource ds) {
 		this.localBus = new HandlerManager(null);
 	
-		this.ds = new FakeSelectorDataSource();
+		this.ds = ds; 
 		this.breads = new BreadcrumbsWidget();
 		this.main = new MainWidget();
 		this.tree = new TreeWidget(ds);
@@ -39,6 +42,8 @@ public class Explorer implements ExplorerPresenter, ExplorerTreeSelectionHandler
 
 		this.setupEventTriggers();
 		this.setupEventHandlers();
+		
+		History.addValueChangeHandler(this);
 	}
 
 	public void setupEventTriggers() {
@@ -47,9 +52,9 @@ public class Explorer implements ExplorerPresenter, ExplorerTreeSelectionHandler
 				@Override
 				public void onClick(ClickEvent event) {
 					if ( icon.getNeo().isPlottable() ) {
-						eventBus.fireEvent(new PlottableSelectionEvent(icon.getNeo()));
+						History.newItem("plot:" + icon.getNeo().uid);
 					} else {
-						localBus.fireEvent(new ExplorerTreeSelectionEvent(icon.getNeo()));
+						History.newItem("explore:" + icon.getNeo().uid);
 					}
 				}
 			});
@@ -61,8 +66,7 @@ public class Explorer implements ExplorerPresenter, ExplorerTreeSelectionHandler
 		this.tree.t.addSelectionHandler(new SelectionHandler<TreeItem>(){
 			@Override
 			public void onSelection(SelectionEvent<TreeItem> event) {
-				NEObject selectedNEO = ds.getElementByUID(event.getSelectedItem().getTitle());
-				localBus.fireEvent(new ExplorerTreeSelectionEvent(selectedNEO));
+				History.newItem("explore:" + event.getSelectedItem().getTitle());
 			}
 		});
 	}
@@ -83,5 +87,13 @@ public class Explorer implements ExplorerPresenter, ExplorerTreeSelectionHandler
 		this.main.setContents(this.ds.getChildrenOf(selection));
 		this.tree.setSelection(selection);
 		this.setupEventTriggers();
+	}
+
+	@Override
+	public void onValueChange(ValueChangeEvent<String> event) {
+		if (event.getValue().split(":")[0].equals("explore")) {
+			NEObject neo = this.ds.getElementByUID(event.getValue().split(":")[1]);
+			localBus.fireEvent(new ExplorerTreeSelectionEvent(neo));
+		}
 	}
 }

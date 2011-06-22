@@ -1,37 +1,49 @@
 package org.gnode.wda.client;
 
+import org.gnode.wda.data.FakeSelectorDataSource;
 import org.gnode.wda.data.NEObject;
 import org.gnode.wda.events.ExplorerInvocationHandler;
 import org.gnode.wda.events.PlottableSelectionEvent;
 import org.gnode.wda.events.PlottableSelectionHandler;
 import org.gnode.wda.explorer.Explorer;
+import org.gnode.wda.graph.GraphManager;
+import org.gnode.wda.interfaces.DataSource;
 import org.gnode.wda.interfaces.ExplorerPresenter;
+import org.gnode.wda.interfaces.GraphPresenter;
 
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerManager;
+import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.IsWidget;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 
-public class AppController implements ExplorerInvocationHandler, PlottableSelectionHandler{
+public class AppController implements ExplorerInvocationHandler, PlottableSelectionHandler, ValueChangeHandler<String>{
 	HandlerManager eventBus;
+	DataSource ds;
 	ExplorerPresenter explorer;
+	GraphPresenter graph;
 	TabPanel tabs;
 	
 	public AppController(HandlerManager eventBus) {
 		this.eventBus = eventBus;
-		this.explorer = new Explorer(this.eventBus);
+		this.ds = new FakeSelectorDataSource();
+		this.explorer = new Explorer(ds);
+		this.graph = new GraphManager(this.eventBus);
 		this.tabs = new TabPanel();
 	}
 
 	public void setupUI() {
-		this.tabs.add(new Label("Plotting area"), "Graph");
-		this.tabs.add((IsWidget) this.explorer.getView(), "Explorer");
+		this.tabs.add((IsWidget)this.graph.getView(), "Graph");
+		this.tabs.add((IsWidget)this.explorer.getView(), "Explorer");
 		this.tabs.selectTab(1);
 		RootPanel.get().add(this.tabs);
 	}
 	
 	public void setupEvents() {
+		History.addValueChangeHandler(this);
+		
 		eventBus.addHandler(PlottableSelectionEvent.TYPE, this);
 	}
 
@@ -44,5 +56,13 @@ public class AppController implements ExplorerInvocationHandler, PlottableSelect
 	@Override
 	public void onExplorerInvoke() {
 		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void onValueChange(ValueChangeEvent<String> event) {
+		if (event.getValue().startsWith("plot:")) {
+			NEObject neo = this.ds.getElementByUID(event.getValue().split(":")[1]);
+			eventBus.fireEvent(new PlottableSelectionEvent(neo));
+		}
 	}
 }

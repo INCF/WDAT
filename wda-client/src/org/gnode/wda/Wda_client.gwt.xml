@@ -23,4 +23,5 @@
   <source path='events'/>
   <source path='explorer'/>
   <source path='data'/>
+  <source path='graph'/>
 </module>
