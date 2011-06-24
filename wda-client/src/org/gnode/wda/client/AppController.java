@@ -14,7 +14,6 @@ import org.gnode.wda.interfaces.GraphPresenter;
 
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -22,17 +21,15 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 
 public class AppController implements ExplorerInvocationHandler, PlottableSelectionHandler, ValueChangeHandler<String>{
-	HandlerManager eventBus;
 	DataSource ds;
 	ExplorerPresenter explorer;
 	GraphPresenter graph;
 	TabPanel tabs;
 	
-	public AppController(HandlerManager eventBus) {
-		this.eventBus = eventBus;
+	public AppController() {
 		this.ds = new FakeSelectorDataSource();
 		this.explorer = new Explorer(ds);
-		this.graph = new GraphManager(this.eventBus);
+		this.graph = new GraphManager(ds);
 		this.tabs = new TabPanel();
 	}
 
@@ -45,8 +42,6 @@ public class AppController implements ExplorerInvocationHandler, PlottableSelect
 	
 	public void setupEvents() {
 		History.addValueChangeHandler(this);
-		
-		eventBus.addHandler(PlottableSelectionEvent.TYPE, this);
 	}
 
 	@Override
@@ -62,10 +57,10 @@ public class AppController implements ExplorerInvocationHandler, PlottableSelect
 
 	@Override
 	public void onValueChange(ValueChangeEvent<String> event) {
-		Window.alert(event.getValue());
 		if (event.getValue().startsWith("plot:")) {
+			this.tabs.selectTab(0);
 			NEObject neo = this.ds.getElementByUID(event.getValue().split(":")[1]);
-			eventBus.fireEvent(new PlottableSelectionEvent(neo));
+			this.graph.getBus().fireEvent(new PlottableSelectionEvent(neo));
 		}
 		if (event.getValue().split(":")[0].equals("explore")) {
 			this.tabs.selectTab(1);
