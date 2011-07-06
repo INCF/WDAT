@@ -10,14 +10,12 @@ public class NEObject{
 
 	public String name;
 	public String uid;
-	public String parent;
 	public Type type;
 		
-	public NEObject(String name, String uid, String parent, Type type) {
+	public NEObject(String name, String uid, Type type) {
 		super();
 		this.name = name;
 		this.uid = uid;
-		this.parent = parent;
 		this.type = type;
 	}
 	

@@ -8,7 +8,6 @@ import org.gnode.wda.interfaces.GraphPresenter;
 import org.gnode.wda.interfaces.GraphView;
 
 import com.google.gwt.event.shared.HandlerManager;
-import com.google.gwt.user.client.Window;
 
 public class GraphManager implements GraphPresenter, PlottableSelectionHandler{
 	HandlerManager localBus;

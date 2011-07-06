@@ -1,5 +1,6 @@
 package org.gnode.wda.data;
 
+import java.util.HashMap;
 import java.util.Vector;
 import java.util.Arrays;
 import java.util.List;
@@ -2359,11 +2360,7 @@ public class FakeSelectorDataSource implements DataSource{
 	
 	@Override
 	public NEObject getParentOf(NEObject child) {
-		for ( NEObject item : this.list ) {
-			if (item.uid == child.parent)
-				return item;
-		}
-		return null;
+		
 	}
 	
 	@Override
@@ -2379,23 +2376,49 @@ public class FakeSelectorDataSource implements DataSource{
 		return (List<NEObject>)rtn;
 	}
 	
+	
 	@Override
-	public NEObject getElementByUID(String uid) {
+	public List<NEObject> getChildrenOf(NEObject parent) {
+}
+
+	@Override
+	public boolean authenticate(String sid) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public NEObject getObject(String sid, String oid) {
 		for (NEObject item : this.list ) {
-			if ( uid.equals(item.uid)) {
+			if ( oid.equals(item.uid)) {
 				return item;
 			}	
 		}
 		return null;
 	}
-	
+
 	@Override
-	public List<NEObject> getChildrenOf(NEObject parent) {
+	public void getData(String sid, String oid, HashMap<String, String> params) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public List<NEObject> getChildren(String sid, String oid) {
 		Vector<NEObject> rtn = new Vector<NEObject>(); 
 		for ( NEObject  item : this.list ) {
-			if ( item.parent == parent.uid ) {
+			if ( item.parent == oid ) {
 				rtn.add(item);
 			}
+		}
+		return (List<NEObject>)rtn;
+	}
+
+	@Override
+	public List<NEObject> getParents(String sid, String oid) {
+		Vector<NEObject> rtn = new Vector<NEObject>();
+		for ( NEObject item : this.list ) {
+			if (item.uid == child.parent)
+				rtn.add(item);
 		}
 		return (List<NEObject>)rtn;
 	}

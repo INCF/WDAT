@@ -1,4 +1,7 @@
+notes
+notes/*
 *.class
 */*.class
 */*.jar
 *.jar
+wda-client/.gwt/.gwt-log

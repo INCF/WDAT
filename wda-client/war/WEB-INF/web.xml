@@ -6,6 +6,14 @@
 <web-app>
   
   <!-- Servlets -->
+  <servlet>
+        <servlet-name>proxy</servlet-name>
+        <servlet-class>org.gnode.wda.server.ProxyServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>proxy</servlet-name>
+        <url-pattern>/proxy/*</url-pattern>
+    </servlet-mapping>
   
   <!-- Default page to serve -->
   <welcome-file-list>

@@ -1,6 +1,6 @@
 package org.gnode.wda.client;
 
-import org.gnode.wda.data.FakeSelectorDataSource;
+import org.gnode.wda.data.GnodeDataSource;
 import org.gnode.wda.data.NEObject;
 import org.gnode.wda.events.ExplorerInvocationHandler;
 import org.gnode.wda.events.ExplorerTreeSelectionEvent;
@@ -14,8 +14,8 @@ import org.gnode.wda.interfaces.GraphPresenter;
 
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TabPanel;
@@ -25,12 +25,14 @@ public class AppController implements ExplorerInvocationHandler, PlottableSelect
 	ExplorerPresenter explorer;
 	GraphPresenter graph;
 	TabPanel tabs;
+	String sid;
 	
 	public AppController() {
-		this.ds = new FakeSelectorDataSource();
+		this.ds = new GnodeDataSource();
 		this.explorer = new Explorer(ds);
 		this.graph = new GraphManager(ds);
 		this.tabs = new TabPanel();
+		this.sid = Cookies.getCookie("sessionid");
 	}
 
 	public void setupUI() {
@@ -59,12 +61,12 @@ public class AppController implements ExplorerInvocationHandler, PlottableSelect
 	public void onValueChange(ValueChangeEvent<String> event) {
 		if (event.getValue().startsWith("plot:")) {
 			this.tabs.selectTab(0);
-			NEObject neo = this.ds.getElementByUID(event.getValue().split(":")[1]);
+			NEObject neo = this.ds.getObject(this.sid, event.getValue().split(":")[1]);
 			this.graph.getBus().fireEvent(new PlottableSelectionEvent(neo));
 		}
 		if (event.getValue().split(":")[0].equals("explore")) {
 			this.tabs.selectTab(1);
-			NEObject neo = this.ds.getElementByUID(event.getValue().split(":")[1]);
+			NEObject neo = this.ds.getObject(this.sid, event.getValue().split(":")[1]);
 			this.explorer.getBus().fireEvent(new ExplorerTreeSelectionEvent(neo));
 		}
 	
