@@ -1,5 +1,6 @@
 package org.gnode.wda.interfaces;
 
-public interface ExplorerView {
+import com.google.gwt.event.dom.client.ChangeHandler;
 
+public interface ExplorerView {
 }

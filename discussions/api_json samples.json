@@ -1,0 +1,85 @@
+Get single object:
+Request: GET /neo/<neo_id>/
+Response:
+[{
+    "neo_id": "epoch_43", 
+    "time": {
+        "data": 17.5,
+        "units": "ms"
+    }, 
+    "duration": {
+        "data": 0.3,
+        "units": "s"
+    },
+    "label": "Displaying blue screen"
+    "segment": "segment_1234",
+    "author": "andrey",
+    "date_created": "01.05.2011",
+    "file_origin": "monkey recordings 16-35.mcs",
+    "logged_in_as": "bob",
+    "message": "Object retrieved successfully."
+}]
+
+Get Data:
+Request: GET /neo/data/<neo_id>/
+Request: GET /neo/analogsignal_15/?t_start=200&t_stop=210
+[{
+    "neo_id": "analogsignal_15", 
+    "signal": {
+        "units": "mV", 
+        "data": [11.2, 12.3, 12.7, 19.0, 7.81, 3.42, 9.28, -5.86, 12.2, 12.7, 19.5]
+    },
+    "author": "andrey",
+    "date_created": "01.05.2011",
+    "file_origin": "monkey recordings 16-35.mcs",
+    "message": "Data retrieved successfully."
+}]
+
+
+Get relationship:
+Request: GET /neo/parents/analogsignal_34
+[{
+    "neo_id": analogsignal_34, 
+    "segment": "segment_1",
+    "recordingchannel": "recordingchannel_12",
+    "message": "Here is the list of object parents."
+}]
+
+or  
+
+[{
+    "neo_id": "block_87", 
+    "segment": [
+        "segment_193",
+        "segment_194",
+        "segment_195"
+    ],
+    "recordingchannelgroup": [
+        "recordingchannelgroup_1",
+        "recordingchannelgroup_2",
+    ],
+    "message": "Here are the contents of the requested object."
+}]
+
+Select :
+Request: GET /neo/select/analogsignal/
+[{
+    "selected": [
+        "analogsignal_10",
+        "analogsignal_11", 
+        "analogsignal_12", 
+        "analogsignal_13", 
+        "analogsignal_14", 
+        "analogsignal_15", 
+        "analogsignal_16", 
+        "analogsignal_17", 
+        "analogsignal_18", 
+        "analogsignal_19", 
+        "analogsignal_20", 
+        "analogsignal_21"
+    ]
+    "object_total": 21,
+    "object_selected": 12,
+    "selected_as_of": 10,
+    "message": "Here is the list of requested objects."
+}]
