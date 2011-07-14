@@ -1,29 +1,25 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<module rename-to='wda_client'>
+<?xml version="1.0"?>
+<module rename-to="wda_client">
   <!-- Inherit the core Web Toolkit stuff.                        -->
-  <inherits name='com.google.gwt.user.User'/>
-
+  <inherits name="com.google.gwt.user.User"/>
   <!-- Inherit the default GWT style sheet.  You can change       -->
   <!-- the theme of your GWT application by uncommenting          -->
   <!-- any one of the following lines.                            -->
-  <inherits name='com.google.gwt.user.theme.clean.Clean'/>
+  <!--<inherits name="com.google.gwt.user.theme.clean.Clean"/>   -->
   <!-- <inherits name='com.google.gwt.user.theme.standard.Standard'/> -->
   <!-- <inherits name='com.google.gwt.user.theme.chrome.Chrome'/> -->
   <!-- <inherits name='com.google.gwt.user.theme.dark.Dark'/>     -->
-
   <!-- Other module inherits                                      -->
-  <inherits name="com.google.gwt.json.JSON" /> 
-  <inherits name="com.google.gwt.http.HTTP" />
-  
+  <inherits name="com.google.gwt.json.JSON"/>
+  <inherits name="com.google.gwt.http.HTTP"/>
   <!-- Specify the app entry point class.                         -->
-  <entry-point class='org.gnode.wda.client.Wda_client'/>
-
+  <entry-point class="org.gnode.wda.client.Wda_client"/>
   <!-- Specify the paths for translatable code                    -->
-  <source path='client'/>
-  <source path='interfaces'/>
-  <source path='selector'/>
-  <source path='events'/>
-  <source path='explorer'/>
-  <source path='data'/>
-  <source path='graph'/>
+  <source path="client"/>
+  <source path="interfaces"/>
+  <source path="selector"/>
+  <source path="events"/>
+  <source path="explorer"/>
+  <source path="data"/>
+  <source path="graph"/>
 </module>
