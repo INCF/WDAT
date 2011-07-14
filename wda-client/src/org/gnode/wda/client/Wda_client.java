@@ -9,7 +9,7 @@ public class Wda_client implements EntryPoint {
 		// Check for cookie setup.
 		String sessionid = Cookies.getCookie("sessionid");
 		if ( sessionid == null ) {
-			Window.open("/proxy/account/login/?next=http%3A%2F%2F127.0.0.1%3A8888%2FWda_client.html%3Fgwt.codesvr%3D127.0.0.1%3A9997", "_self", "");
+			Window.open("/account/login/?next=%2Fwda%2Fwda-client%2Fwar%2FWda_client.html%3F#explore:", "_self", "");
 			return;
 		}		
 		
