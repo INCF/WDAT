@@ -1,6 +1,6 @@
 package org.gnode.wda.explorer;
 
-import org.gnode.wda.data.NEObject;
+import org.gnode.wda.data.NeoObject;
 
 import java.util.List;
 import java.util.Vector;
@@ -37,9 +37,9 @@ public class MainWidget extends Composite {
 		main.clear();
 	}
 	
-	public void setContents(List<NEObject> list) {
+	public void setContents(List<NeoObject> list) {
 		this.flush();
-		for( NEObject item : list ) {
+		for( NeoObject item : list ) {
 			NeoIcon icon = new NeoIcon(item);
 			this.main.add(icon);
 			this.children.add(icon);

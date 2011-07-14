@@ -3,7 +3,7 @@ package org.gnode.wda.explorer;
 
 import java.util.List;
 
-import org.gnode.wda.data.NEObject;
+import org.gnode.wda.data.NeoObject;
 import org.gnode.wda.interfaces.DataSource;
 
 import com.google.gwt.event.logical.shared.SelectionHandler;
@@ -34,12 +34,12 @@ public class TreeWidget extends Composite {
 		this.t.addSelectionHandler(handler);
 	}
 	
-	public void setChildren(TreeItem parent, List<NEObject> children) {
+	public void setChildren(TreeItem parent, List<NeoObject> children) {
 		// This will cause the root list to be refreshed when 
 		// we are supplying a new top-level type. For updating lists
 		// the parents should already be empty.
 		parent.removeItems();
-		for ( NEObject child : children ) {
+		for ( NeoObject child : children ) {
 			TreeItem addendum = new TreeItem(child.name);
 			addendum.setTitle("asd");
 			parent.addItem(addendum);

@@ -2,7 +2,7 @@ package org.gnode.wda.interfaces;
 
 import java.util.List;
 
-import org.gnode.wda.data.NEObject;
+import org.gnode.wda.data.NeoObject;
 
 import com.google.gwt.event.shared.HandlerManager;
 

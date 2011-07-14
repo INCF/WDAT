@@ -2,20 +2,15 @@ package org.gnode.wda.explorer;
 
 import java.util.List;
 
-import org.gnode.wda.data.NEObject;
-import org.gnode.wda.events.ExplorerTreeSelectionEvent;
-import org.gnode.wda.events.ExplorerTreeSelectionHandler;
+import org.gnode.wda.data.NeoObject;
 import org.gnode.wda.events.NotificationHandler;
 import org.gnode.wda.events.NotificationEvent;
 import org.gnode.wda.interfaces.DataSource;
 import org.gnode.wda.interfaces.ExplorerPresenter;
 import org.gnode.wda.interfaces.ExplorerView;
-import org.gnode.wda.client.Utilities;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -25,7 +20,6 @@ import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.TreeItem;
 
 public class Explorer implements ExplorerPresenter, ValueChangeHandler<String>, NotificationHandler{
@@ -115,7 +109,7 @@ public class Explorer implements ExplorerPresenter, ValueChangeHandler<String>, 
 			public void onResponseReceived(Request request, Response response) {
 				if (response.getStatusCode() == 200) {
 					localBus.fireEvent(new NotificationEvent("Received data."));
-					List<NEObject> selected = ds.parseType(response, type);
+					List<NeoObject> selected = ds.parseType(response, type);
 					
 					tree.setChildren(tree.root, selected);
 				} else {
@@ -137,7 +131,9 @@ public class Explorer implements ExplorerPresenter, ValueChangeHandler<String>, 
 			public void onResponseReceived(Request request, Response response) {
 				if (response.getStatusCode() == 200) {
 					localBus.fireEvent(new NotificationEvent("Received data"));
-					List<NEObject> selected = ds.parseChildren(response);
+					List<NeoObject> selected = ds.parseChildren(response);
+					
+					tree.setChildren(titem, selected);
 				}
 			}
 

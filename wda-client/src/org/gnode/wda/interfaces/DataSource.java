@@ -6,7 +6,7 @@ import com.google.gwt.http.client.Response;
 import java.util.HashMap;
 import java.util.List;
 
-import org.gnode.wda.data.NEObject;
+import org.gnode.wda.data.NeoObject;
 
 
 public interface DataSource{
@@ -32,7 +32,7 @@ public interface DataSource{
 	
 	// This will contain json evaluation and construction of NEObjects
 	// from them
-	public List<NEObject> parseType(Response response, String type);
+	public List<NeoObject> parseType(Response response, String type);
 
-	public List<NEObject> parseChildren(Response response);
+	public List<NeoObject> parseChildren(Response response);
 }

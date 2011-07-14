@@ -1,6 +1,6 @@
 package org.gnode.wda.explorer;
 
-import org.gnode.wda.data.NEObject;
+import org.gnode.wda.data.NeoObject;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -16,9 +16,9 @@ public class NeoIcon extends Composite {
 	Label label;
 	Image im;
 	boolean selected;
-	NEObject neo;
+	NeoObject neo;
 	
-	public NeoIcon(NEObject object) {
+	public NeoIcon(NeoObject object) {
 		this.neo = object;
 		wrap = new VerticalPanel();
 		wrap.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
@@ -53,7 +53,7 @@ public class NeoIcon extends Composite {
 		this.wrap.addDomHandler(handler, ClickEvent.getType());
 	}
 
-	public NEObject getNeo() {
+	public NeoObject getNeo() {
 		return this.neo;
 	}
 }

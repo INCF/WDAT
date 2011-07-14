@@ -82,11 +82,11 @@ public class GnodeDataSource implements DataSource{
 		
 		this.transport(url, requestData, callback);
 	}
-	
+
 	@Override
-	public List<NEObject> parseType(Response response, String type) {
+	public List<NeoObject> parseType(Response response, String type) {
 		// Assume that the response codes are already evaluated.
-		Vector<NEObject> rtn = new Vector<NEObject>();
+		Vector<NeoObject> rtn = new Vector<NeoObject>();
 
 		JSONObject root = null;
 		try {
@@ -96,25 +96,25 @@ public class GnodeDataSource implements DataSource{
 			
 			JSONArray selected = root.get("selected").isArray();
 			if (selected == null) {
-				return (List<NEObject>)rtn;
+				return (List<NeoObject>)rtn;
 			} else {
 				// there are selections
 				for ( int i = 0 ; i < selected.size() ; i++) {
 					JSONString uid = selected.get(i).isString();
-					rtn.add(new NEObject(uid.stringValue(), type));
+					rtn.add(new NeoObject(uid.stringValue(), type));
 				}
 			}
-			return (List<NEObject>)rtn;
+			return (List<NeoObject>)rtn;
 			
 		} catch (JSONException e) {
 			Window.alert("JSON Exception");
 		}
-		return (List<NEObject>)rtn;
+		return (List<NeoObject>)rtn;
 	}
 	
-	public List<NEObject> parseChildren(Response response) {
+	public List<NeoObject> parseChildren(Response response) {
 		// Assume that the response code have been checked
-		Vector<NEObject> rtn = new Vector<NEObject>();
+		Vector<NeoObject> rtn = new Vector<NeoObject>();
 		
 		JSONObject root = null;
 		try {
@@ -124,6 +124,6 @@ public class GnodeDataSource implements DataSource{
 		} catch (JSONException e) {
 			Window.alert("JSON Exception");
 		}
-		return (List<NEObject>)rtn;
+		return (List<NeoObject>)rtn;
 	}
 }

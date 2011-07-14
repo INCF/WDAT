@@ -22,6 +22,7 @@ public class NotificationArea extends Composite {
 	
 	public void publish(String message) {
 		Date date = new Date();
+		@SuppressWarnings("deprecation")
 		String time = date.getHours() + ":" + date.getMinutes() + ":" + (date.getSeconds() < 10 ? "0" : "") + date.getSeconds(); 
 		
 		Label lbl = new Label(time + " -> " + message);

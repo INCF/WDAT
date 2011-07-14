@@ -1,6 +1,6 @@
 package org.gnode.wda.explorer;
 
-import org.gnode.wda.data.NEObject;
+import org.gnode.wda.data.NeoObject;
 
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.user.client.ui.Composite;
@@ -17,7 +17,7 @@ public class TopLevelSelectorWidget extends Composite {
 		this.lb = new ListBox(false);
 	
 		this.lb.addItem("Select", "null");
-		for (NEObject.Type item : NEObject.getContainers()) {
+		for (NeoObject.Type item : NeoObject.getContainers()) {
 			lb.addItem(item.name());
 		}
 		

@@ -1,12 +1,12 @@
 package org.gnode.wda.events;
 
-import org.gnode.wda.data.NEObject;
+import org.gnode.wda.data.NeoObject;
 
 import com.google.gwt.event.shared.GwtEvent;
 
 public class PlottableSelectionEvent extends GwtEvent<PlottableSelectionHandler> {
-	NEObject selection;
-	public PlottableSelectionEvent(NEObject selection) {
+	NeoObject selection;
+	public PlottableSelectionEvent(NeoObject selection) {
 		this.selection = selection;
 	}
 	public static final Type<PlottableSelectionHandler> TYPE = new 

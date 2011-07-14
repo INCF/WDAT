@@ -1,12 +1,12 @@
 package org.gnode.wda.events;
 
-import org.gnode.wda.data.NEObject;
+import org.gnode.wda.data.NeoObject;
 
 import com.google.gwt.event.shared.GwtEvent;
 
 public class ExplorerTreeSelectionEvent extends GwtEvent<ExplorerTreeSelectionHandler> {
-	NEObject selection;
-	public ExplorerTreeSelectionEvent(NEObject selection) {
+	NeoObject selection;
+	public ExplorerTreeSelectionEvent(NeoObject selection) {
 		this.selection = selection;
 	}
 	public static final Type<ExplorerTreeSelectionHandler> TYPE = new 

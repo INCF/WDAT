@@ -1,7 +1,7 @@
 package org.gnode.wda.graph;
 
 import org.gnode.wda.client.Utilities;
-import org.gnode.wda.data.NEObject;
+import org.gnode.wda.data.NeoObject;
 import org.gnode.wda.events.PlottableSelectionEvent;
 import org.gnode.wda.events.PlottableSelectionHandler;
 import org.gnode.wda.interfaces.DataSource;
@@ -89,7 +89,7 @@ public class GraphManager implements GraphPresenter, ValueChangeHandler<String>{
 			@Override
 			public void onResponseReceived(Request request, Response response) {
 				if (response.getStatusCode() == 200) {
-					Window.alert("received proper response");
+					ds.parseData(response);
 				} else {
 					Window.alert("error. big time");
 				}
