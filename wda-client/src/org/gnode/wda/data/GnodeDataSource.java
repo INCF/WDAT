@@ -94,17 +94,13 @@ public class GnodeDataSource implements DataSource{
 			JSONValue value = JSONParser.parseLenient(response.getText());
 			root = value.isObject();
 			
-			JSONArray selected = root.get("selected").isArray();
-			if (selected == null) {
-				return (List<NeoObject>)rtn;
-			} else {
-				// there are selections
-				for ( int i = 0 ; i < selected.size() ; i++) {
-					JSONString uid = selected.get(i).isString();
-					rtn.add(new NeoObject(uid.stringValue(), type));
-				}
+			if (root == null) {
+				// In case there is array encapsulation.
+				root = value.isArray().get(0).isObject();
 			}
-			return (List<NeoObject>)rtn;
+			
+			JSONArray selected = root.get("selected").isArray();
+			return neo_from_jsonarray(selected, type);
 			
 		} catch (JSONException e) {
 			Window.alert("JSON Exception");
@@ -112,7 +108,7 @@ public class GnodeDataSource implements DataSource{
 		return (List<NeoObject>)rtn;
 	}
 	
-	public List<NeoObject> parseChildren(Response response) {
+	public List<NeoObject> parseChildren(Response response, String type) {
 		// Assume that the response code have been checked
 		Vector<NeoObject> rtn = new Vector<NeoObject>();
 		
@@ -121,9 +117,34 @@ public class GnodeDataSource implements DataSource{
 			JSONValue value = JSONParser.parseLenient(response.getText());
 			root = value.isObject();
 			
+			if (root == null) {
+				// in case array encapsulation
+				root = value.isArray().get(0).isObject();
+			}
+			
+			for (String childtype : NeoObject.getChildrenTypes(type)) {
+				JSONArray children = root.get(childtype).isArray();
+				if (children != null) 
+					rtn.addAll(neo_from_jsonarray(children, childtype));
+			}
 		} catch (JSONException e) {
 			Window.alert("JSON Exception");
 		}
 		return (List<NeoObject>)rtn;
 	}
+	
+	private List<NeoObject> neo_from_jsonarray(JSONArray array, String type) {
+		Vector<NeoObject> rtn = new Vector<NeoObject>();
+		
+		if (array == null) {
+			return (List<NeoObject>)rtn;
+		} else {
+			for ( int i = 0; i < array.size(); i++) {
+				JSONString uid = array.get(i).isString();
+				rtn.add(new NeoObject(uid.stringValue(), type));
+			}
+		}
+		return (List<NeoObject>)rtn;
+	}
 }
+

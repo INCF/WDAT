@@ -17,8 +17,8 @@ public class TopLevelSelectorWidget extends Composite {
 		this.lb = new ListBox(false);
 	
 		this.lb.addItem("Select", "null");
-		for (NeoObject.Type item : NeoObject.getContainers()) {
-			lb.addItem(item.name());
+		for (String item: NeoObject.getContainers()) {
+			lb.addItem(item);
 		}
 		
 		initWidget(main);

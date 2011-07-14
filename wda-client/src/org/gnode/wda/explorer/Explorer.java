@@ -20,6 +20,7 @@ import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.user.client.History;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.TreeItem;
 
 public class Explorer implements ExplorerPresenter, ValueChangeHandler<String>, NotificationHandler{
@@ -131,9 +132,11 @@ public class Explorer implements ExplorerPresenter, ValueChangeHandler<String>, 
 			public void onResponseReceived(Request request, Response response) {
 				if (response.getStatusCode() == 200) {
 					localBus.fireEvent(new NotificationEvent("Received data"));
-					List<NeoObject> selected = ds.parseChildren(response);
+					List<NeoObject> selected = ds.parseChildren(response, titem.getTitle());
 					
-					tree.setChildren(titem, selected);
+					// we need to filter out all the plottable objects here. 
+					tree.setChildren(titem, NeoObject.getContainersOnly(selected));
+					main.setData(NeoObject.getPlottablesOnly(selected));
 				}
 			}
 

@@ -1,71 +1,70 @@
 package org.gnode.wda.data;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Vector;
 
 public class NeoObject{
-	public enum Type {
-		BLOCK, SEGMENT, EVENT, EVENTARRAY, EPOCH, EPOCHARRAY,
-		UNIT, SPIKETRAIN, ANALOGSIGNAL, ANALOGSIGNALARRAY,
-		IRSANALOGSIGNALARRAY, SPIKE, RECORDINGCHANNELGROUP,
-		RECORDINGCHANNEL;
 		
-		public static Type fromString(String type) {
-			type = type.toLowerCase();
-			
-			if (type == "block") return Type.BLOCK;
-			if (type == "segment") return Type.SEGMENT;
-			if (type == "event") return Type.EVENT;
-			if (type == "eventarray") return Type.EVENTARRAY;
-			if (type == "epoch") return Type.EPOCH;
-			if (type == "epocharray") return Type.EPOCHARRAY;
-			if (type == "unit") return Type.UNIT;
-			if (type == "spiketrain") return Type.SPIKETRAIN;
-			if (type == "analogsignal") return Type.ANALOGSIGNAL;
-			if (type == "recordingchannelgroup") return Type.RECORDINGCHANNELGROUP;
-			if (type == "analogsignalarray") return Type.ANALOGSIGNALARRAY;
-			if (type == "irsanalogsignalarray") return Type.IRSANALOGSIGNALARRAY;
-			if (type == "spike") return Type.SPIKE;
-			if (type == "recordingchannel") return Type.RECORDINGCHANNELGROUP;
-			
-			return null;
-		}
-	}
-
 	public String name;
-	public Type type;
+	public String type;
 	
 	public NeoObject(String name, String _type) {
 		super();
 		this.name = name;
-		this.type = NeoObject.Type.fromString(_type);
-	}
-	public NeoObject(String name, Type type) {
-		super();
-		this.name = name;
-		this.type = type;
+		this.type = _type;
 	}
 	
 	public boolean isPlottable(){
-		if (this.type == NeoObject.Type.EVENT ||
-			this.type == NeoObject.Type.EPOCH ||
-			this.type == NeoObject.Type.SPIKE ||
-			this.type == NeoObject.Type.SPIKETRAIN ||
-			this.type == NeoObject.Type.ANALOGSIGNAL) {
+		if (this.type == "epoch" ||
+			this.type == "event" ||
+			this.type == "spike" ||
+			this.type == "spiketrain" ||
+			this.type == "irsaanalogsignal" || 
+			this.type == "analogsignal" ) {
 			return true;
 		}
 		return false;
 	}
 	
-	public static List<NeoObject.Type> getContainers() {
-		return Arrays.asList(NeoObject.Type.ANALOGSIGNALARRAY,
-					  		NeoObject.Type.BLOCK,
-					  		NeoObject.Type.EPOCHARRAY,
-					  		NeoObject.Type.EVENTARRAY,
-					  		NeoObject.Type.IRSANALOGSIGNALARRAY,
-					  		NeoObject.Type.RECORDINGCHANNEL,
-					  		NeoObject.Type.RECORDINGCHANNELGROUP,
-					  		NeoObject.Type.SEGMENT
-					  	    );
+	public static List<String> getContainers() {
+		return Arrays.asList("analogsignalarray", "block", "epocharray", "eventarray",
+							"irsaanalogsignalarray", "recordingchannel", "recordingchannelgroup", "segment");
+	}
+	
+	public static List<String> getChildrenTypes(String type) {
+		//TODO this is very time intensive. Move this to constructor.
+		HashMap<String, List<String>> hm = new HashMap<String, List<String>>();
+		hm.put("block", Arrays.asList("segment", "recordingchannelgroup"));
+		hm.put("segment", Arrays.asList("analogsignal", "irsaanalogsignal",
+				"analogsignalarray", "spiketrain", "spike", "event", "eventarray",
+				"epoch", "epocharray"));
+		hm.put("eventarray", Arrays.asList("event"));
+		hm.put("epocharray", Arrays.asList("epoch"));
+		hm.put("recordingchannelgroup", Arrays.asList("recordingchannel", "analogsignalarray"));
+		hm.put("recordingchannel", Arrays.asList("unit", "analogsignal", "irsaanalogsignal"));
+		hm.put("unit", Arrays.asList("spiketrain", "spike"));
+		hm.put("analogsignalarray", Arrays.asList("analogsignal"));
+	
+		return hm.get(type);
+	}
+
+	public static List<NeoObject> getContainersOnly(List<NeoObject> selected) {
+		Vector<NeoObject> rtn = new Vector<NeoObject>();
+		for (NeoObject item : selected ) {
+			if ( !item.isPlottable() ) 
+				rtn.add(item);
+		}
+		return (List<NeoObject>)rtn;
+	}
+	
+	public static List<NeoObject> getPlottablesOnly(List<NeoObject> selected) {
+		Vector<NeoObject> rtn = new Vector<NeoObject>();
+		for (NeoObject item : selected ) {
+			if ( item.isPlottable() ) 
+				rtn.add(item);
+		}
+		return (List<NeoObject>)rtn;
 	}
 }

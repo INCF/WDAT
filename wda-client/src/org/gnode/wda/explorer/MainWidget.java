@@ -1,52 +1,53 @@
 package org.gnode.wda.explorer;
 
+import java.util.List;
+
 import org.gnode.wda.data.NeoObject;
 
-import java.util.List;
-import java.util.Vector;
-
+import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 
 public class MainWidget extends Composite {
-	
-	/* This widget handles the click events for its children 
-	 * icon widgets. not for itself. 
-	 * 
-	 *  When I say main, I mean of primary importance.
-	 * Not the top-level one. I know it is ambiguous
-	 * but couldn't find anything more relevant.
-	 */
-	FlowPanel main; 
-	ScrollPanel wrap;
-	Vector<NeoIcon> children;
-		
+	private ScrollPanel main;
+	private CellTable<NeoObject> table;
 	
 	public MainWidget() {
-		main = new FlowPanel();
-		wrap = new ScrollPanel();
-		wrap.add(main);
-		children = new Vector<NeoIcon>();
+		this.main = new ScrollPanel();
+		this.main.setAlwaysShowScrollBars(false);
 		
-		initWidget(wrap);
+		this.table = new CellTable<NeoObject>();
+		
+		// Setup table 
+		TextColumn<NeoObject> nameColumn = new TextColumn<NeoObject>() {
+			@Override
+			public String getValue(NeoObject object) {
+				return object.name;
+			}
+		};
+		this.table.addColumn(nameColumn, "NEO Id");
+		this.table.setColumnWidth(nameColumn, "250px");
+		
+		TextColumn<NeoObject> typeColumn = new TextColumn<NeoObject>() {
+			@Override
+			public String getValue(NeoObject object) {
+				return object.type;
+			}
+		};
+		this.table.addColumn(typeColumn, "NEO Type");
+		this.table.setColumnWidth(typeColumn, "400px");
+		
+		this.table.setRowCount(0);
+		
+		// Setup main widget
+		main.add(this.table);
+		initWidget(this.main);
 	}
 	
-	
-	public void flush() {
-		main.clear();
-	}
-	
-	public void setContents(List<NeoObject> list) {
-		this.flush();
-		for( NeoObject item : list ) {
-			NeoIcon icon = new NeoIcon(item);
-			this.main.add(icon);
-			this.children.add(icon);
-		}
-	}
-	
-	public List<NeoIcon> getChildren() {
-		return (List<NeoIcon>)this.children;
+	public void setData(List<NeoObject> data) {
+		this.table.setRowCount(data.size());
+		this.table.setRowData(data);
 	}
 }

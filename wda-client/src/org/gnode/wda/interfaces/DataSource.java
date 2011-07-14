@@ -34,5 +34,5 @@ public interface DataSource{
 	// from them
 	public List<NeoObject> parseType(Response response, String type);
 
-	public List<NeoObject> parseChildren(Response response);
+	public List<NeoObject> parseChildren(Response response, String type);
 }

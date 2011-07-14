@@ -89,7 +89,7 @@ public class GraphManager implements GraphPresenter, ValueChangeHandler<String>{
 			@Override
 			public void onResponseReceived(Request request, Response response) {
 				if (response.getStatusCode() == 200) {
-					ds.parseData(response);
+					//ds.parseData(response);
 				} else {
 					Window.alert("error. big time");
 				}

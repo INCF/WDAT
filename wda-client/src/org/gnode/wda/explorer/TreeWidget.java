@@ -7,6 +7,7 @@ import org.gnode.wda.data.NeoObject;
 import org.gnode.wda.interfaces.DataSource;
 
 import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
@@ -41,7 +42,7 @@ public class TreeWidget extends Composite {
 		parent.removeItems();
 		for ( NeoObject child : children ) {
 			TreeItem addendum = new TreeItem(child.name);
-			addendum.setTitle("asd");
+			addendum.setTitle(child.type);
 			parent.addItem(addendum);
 		}
 		parent.setState(true);
