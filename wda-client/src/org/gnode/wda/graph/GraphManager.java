@@ -2,8 +2,6 @@ package org.gnode.wda.graph;
 
 import org.gnode.wda.client.Utilities;
 import org.gnode.wda.data.NeoObject;
-import org.gnode.wda.events.PlottableSelectionEvent;
-import org.gnode.wda.events.PlottableSelectionHandler;
 import org.gnode.wda.interfaces.DataSource;
 import org.gnode.wda.interfaces.GraphPresenter;
 import org.gnode.wda.interfaces.GraphView;
@@ -71,7 +69,7 @@ public class GraphManager implements GraphPresenter, ValueChangeHandler<String>{
 	@Override
 	public void onValueChange(ValueChangeEvent<String> event) {
 		if (Utilities.getFragmentType(event.getValue()) == "plot") {
-			String neo_id = Utilities.getOption(event.getValue(), "plottable");
+			String neo_id = Utilities.getOption(event.getValue(), "obj");
 			this.addHistory(neo_id);		
 			this.draw(neo_id);
 		} else {
@@ -85,7 +83,6 @@ public class GraphManager implements GraphPresenter, ValueChangeHandler<String>{
 	
 	public void draw(String neo_id) {
 		this.ds.getData(neo_id, null, new RequestCallback() {
-			
 			@Override
 			public void onResponseReceived(Request request, Response response) {
 				if (response.getStatusCode() == 200) {

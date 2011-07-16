@@ -7,7 +7,6 @@ import org.gnode.wda.data.NeoObject;
 import org.gnode.wda.interfaces.DataSource;
 
 import com.google.gwt.event.logical.shared.SelectionHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;

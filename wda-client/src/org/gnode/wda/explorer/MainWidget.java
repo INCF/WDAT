@@ -52,7 +52,7 @@ public class MainWidget extends Composite {
 		plotColumn.setFieldUpdater(new FieldUpdater<NeoObject, String>() {
 			@Override
 			public void update(int index, NeoObject object, String value) {
-				History.newItem("plot:" + object.name + "&type=" + object.type);
+				History.newItem("plot:" + "obj=" + object.name + "&type=" + object.type);
 			}
 		});
 		this.table.addColumn(plotColumn, "Actions");
