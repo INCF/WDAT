@@ -1,6 +1,7 @@
 package org.gnode.wda.graph;
 
 import org.gnode.wda.client.Utilities;
+import org.gnode.wda.data.AnalogSignal;
 import org.gnode.wda.data.NeoObject;
 import org.gnode.wda.interfaces.DataSource;
 import org.gnode.wda.interfaces.GraphPresenter;
@@ -12,6 +13,8 @@ import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.Response;
+import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
 
@@ -64,14 +67,13 @@ public class GraphManager implements GraphPresenter, ValueChangeHandler<String>{
 		return this.localBus;
 	}
 	
-
-
 	@Override
 	public void onValueChange(ValueChangeEvent<String> event) {
 		if (Utilities.getFragmentType(event.getValue()) == "plot") {
 			String neo_id = Utilities.getOption(event.getValue(), "obj");
+			String neo_type = Utilities.getOption(event.getValue(), "type");
 			this.addHistory(neo_id);		
-			this.draw(neo_id);
+			this.draw(neo_id, neo_type);
 		} else {
 			// pass
 		}
@@ -81,14 +83,17 @@ public class GraphManager implements GraphPresenter, ValueChangeHandler<String>{
 		// add to the history panel.
 	}
 	
-	public void draw(String neo_id) {
+	public void draw(String neo_id, final String type) {
 		this.ds.getData(neo_id, null, new RequestCallback() {
 			@Override
 			public void onResponseReceived(Request request, Response response) {
 				if (response.getStatusCode() == 200) {
-					//ds.parseData(response);
+					JSONObject obj = JSONParser.parseLenient(response.getText()).isObject();
+					if (type.equalsIgnoreCase("analogsignal")) {
+						AnalogSignal analog = new AnalogSignal(obj);
+					}
 				} else {
-					Window.alert("error. big time");
+					// Convey that an error on the server occured
 				}
 			}
 			

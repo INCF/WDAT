@@ -39,6 +39,7 @@ public class AppController implements ValueChangeHandler<String>{
 		this.tabs.selectTab(1);
 		if (hash.startsWith("#plot")) this.tabs.selectTab(0);
 		if (hash.startsWith("#explore")) this.tabs.selectTab(1);
+		History.fireCurrentHistoryState();
 	}
 	
 	public void setupEvents() {
