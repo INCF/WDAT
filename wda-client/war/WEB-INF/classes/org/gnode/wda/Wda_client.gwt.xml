@@ -12,6 +12,7 @@
   <!-- Other module inherits                                      -->
   <inherits name="com.google.gwt.json.JSON"/>
   <inherits name="com.google.gwt.http.HTTP"/>
+  <inherits name="ca.nanometrics.gflot.GFlot"/>
   <!-- Specify the app entry point class.                         -->
   <entry-point class="org.gnode.wda.client.Wda_client"/>
   <!-- Specify the paths for translatable code                    -->

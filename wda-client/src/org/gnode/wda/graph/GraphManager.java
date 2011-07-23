@@ -2,7 +2,11 @@ package org.gnode.wda.graph;
 
 import org.gnode.wda.client.Utilities;
 import org.gnode.wda.data.AnalogSignal;
-import org.gnode.wda.data.NeoObject;
+import org.gnode.wda.data.Epoch;
+import org.gnode.wda.data.Event;
+import org.gnode.wda.data.IRSAAnalogSignal;
+import org.gnode.wda.data.Spike;
+import org.gnode.wda.data.SpikeTrain;
 import org.gnode.wda.interfaces.DataSource;
 import org.gnode.wda.interfaces.GraphPresenter;
 import org.gnode.wda.interfaces.GraphView;
@@ -23,8 +27,7 @@ public class GraphManager implements GraphPresenter, ValueChangeHandler<String>{
 	DataSource ds;
 	GraphView dumbView;
 	StaticPanelWidget staticPanel;
-	MasterPanelWidget masterPanel;
-	DetailPanelWidget detailPanel;
+	MasterDetailPanelWidget masterDetailPanel;
 	GraphHistoryWidget historyPanel;
 	
 	
@@ -32,14 +35,12 @@ public class GraphManager implements GraphPresenter, ValueChangeHandler<String>{
 		this.ds = ds;
 		this.localBus = new HandlerManager(null);
 		this.staticPanel = new StaticPanelWidget();
-		this.masterPanel = new MasterPanelWidget();
-		this.detailPanel = new DetailPanelWidget();
+		this.masterDetailPanel = new MasterDetailPanelWidget();
 		this.historyPanel = new GraphHistoryWidget();
 		
 		this.dumbView = new GraphViewWidget(this.historyPanel,
 										    this.staticPanel,
-										    this.masterPanel,
-										    this.detailPanel);
+										    this.masterDetailPanel);
 		
 		History.addValueChangeHandler(this);
 		this.setupEventTriggers();
@@ -91,6 +92,25 @@ public class GraphManager implements GraphPresenter, ValueChangeHandler<String>{
 					JSONObject obj = JSONParser.parseLenient(response.getText()).isObject();
 					if (type.equalsIgnoreCase("analogsignal")) {
 						AnalogSignal analog = new AnalogSignal(obj);
+						// do analog plotting 
+						masterDetailPanel.setData(analog);
+					}
+					if (type.equalsIgnoreCase("epoch")) {
+						Epoch epoch = new Epoch(obj);
+						// do epoch plotting 
+						
+					}if (type.equalsIgnoreCase("event")) {
+						Event event = new Event(obj);
+						// do event plotting
+					}if (type.equalsIgnoreCase("irsaanalogsignal")) {
+						IRSAAnalogSignal irsaanalogsignal = new IRSAAnalogSignal(obj);
+						// process irsaa
+					}if (type.equalsIgnoreCase("spike")) {
+						Spike spike = new Spike(obj);
+						// process spike
+					}if (type.equalsIgnoreCase("spiketrain")) {
+						SpikeTrain spiketrain = new SpikeTrain(obj);
+						// process spiketrain
 					}
 				} else {
 					// Convey that an error on the server occured

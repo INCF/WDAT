@@ -52,7 +52,7 @@ public class ProxyServlet extends HttpServlet {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private static final String targetServer = "http://hal10.g-node.pri";
+	private static final String targetServer = "http://172.24.10.90";
  
 	@Override
 	@SuppressWarnings("unchecked")

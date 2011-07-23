@@ -118,7 +118,7 @@ Spike
 }
 
 Event
-{
+
     "segment": "segment_5",
     "time": {
         "units": "ms", 

@@ -16,6 +16,13 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 
 public class AppController implements ValueChangeHandler<String>{
+	/* AppController is a top-level presenter module. 
+	 * Handles interacion between Graph Explorer and 
+	 * maybe later, other modules of the application. 
+	 * 
+	 * Currently, appcontroller only switches between tabs based on
+	 * URL Fragments. 
+	 */
 	DataSource ds;
 	ExplorerPresenter explorer;
 	GraphPresenter graph;
@@ -30,6 +37,11 @@ public class AppController implements ValueChangeHandler<String>{
 	}
 
 	public void setupUI() {
+		/* Setting up of the UI is quarantined off to its own function
+		 * and is not directly called from the constructor so that later
+		 * if there are some calculations that need to be passed on to the
+		 * UI, it can be done in the entry point class.
+		 */
 		this.tabs.add((IsWidget)this.graph.getView(), "Graph");
 		this.tabs.add((IsWidget)this.explorer.getView(), "Explorer");
 		RootPanel.get().add(this.tabs);
@@ -39,7 +51,9 @@ public class AppController implements ValueChangeHandler<String>{
 		this.tabs.selectTab(1);
 		if (hash.startsWith("#plot")) this.tabs.selectTab(0);
 		if (hash.startsWith("#explore")) this.tabs.selectTab(1);
-		History.fireCurrentHistoryState();
+		History.fireCurrentHistoryState(); // This is required to support page refresh.
+										   // browsers don't fire History change events
+										   // on page refresh.
 	}
 	
 	public void setupEvents() {
