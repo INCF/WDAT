@@ -22,7 +22,7 @@ public class GnodeDataSource implements DataSource{
 	/* 
 	 * An g-node specific implementation of the DataSource interface.
 	 */
-	String prefix 				= "/proxy/";
+	String prefix 				= "/";
 	String getObjectUrl 		= prefix + "neo/";
 	String getObjectDataUrl		= prefix + "neo/data/";
 	String getChildrenUrl		= prefix + "neo/children/";
