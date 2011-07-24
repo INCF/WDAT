@@ -19,6 +19,9 @@ import com.google.gwt.json.client.JSONValue;
 import com.google.gwt.user.client.Window;
 
 public class GnodeDataSource implements DataSource{
+	/* 
+	 * An g-node specific implementation of the DataSource interface.
+	 */
 	String prefix 				= "/proxy/";
 	String getObjectUrl 		= prefix + "neo/";
 	String getObjectDataUrl		= prefix + "neo/data/";
@@ -33,6 +36,9 @@ public class GnodeDataSource implements DataSource{
 	}
 
 	private void transport(String url, String requestData, RequestCallback callback) {
+		// All network requests pass through this function. 
+		// Would help monitor network activity by logging all
+		// requests or sending out notifications.
 		RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, 
 													url);
 		try {

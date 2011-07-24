@@ -11,7 +11,7 @@ public class Epoch extends NeoData{
 	public Quantity duration;
 	
 	public Epoch(JSONObject obj) {
-		this.neo_id = obj.get("neo_id").isString().stringValue();
+		this.setNeo_id(obj.get("neo_id").isString().stringValue());
 		this.epocharray = obj.get("epocharray").isString().stringValue();
 		this.segment = obj.get("segment").isString().stringValue();
 		this.label = obj.get("label").isString().stringValue();

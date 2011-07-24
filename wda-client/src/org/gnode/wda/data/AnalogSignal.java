@@ -4,23 +4,80 @@ import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 
 public class AnalogSignal extends NeoData {
-	public String name;
-	
+	private String name;
+
 	// Parents. Contain neo IDs
-	public String analogsignalarray;
-	public String recordingchannel;
-	public String segment;
+	private String analogsignalarray;
+	private String recordingchannel;
+	private String segment;
 
 	// data 
-	public Quantity t_start;
+	private Quantity t_start;
 
-	public Quantity sampling_rate;
+	private Quantity sampling_rate;
 	
-	public QuantityList signal;
+	private QuantityList signal;
+	
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getAnalogsignalarray() {
+		return analogsignalarray;
+	}
+
+	public void setAnalogsignalarray(String analogsignalarray) {
+		this.analogsignalarray = analogsignalarray;
+	}
+
+	public String getRecordingchannel() {
+		return recordingchannel;
+	}
+
+	public void setRecordingchannel(String recordingchannel) {
+		this.recordingchannel = recordingchannel;
+	}
+
+	public String getSegment() {
+		return segment;
+	}
+
+	public void setSegment(String segment) {
+		this.segment = segment;
+	}
+
+	public Quantity getT_start() {
+		return t_start;
+	}
+
+	public void setT_start(Quantity t_start) {
+		this.t_start = t_start;
+	}
+
+	public Quantity getSampling_rate() {
+		return sampling_rate;
+	}
+
+	public void setSampling_rate(Quantity sampling_rate) {
+		this.sampling_rate = sampling_rate;
+	}
+
+	public QuantityList getSignal() {
+		return signal;
+	}
+
+	public void setSignal(QuantityList signal) {
+		this.signal = signal;
+	}
+
 	
 	public AnalogSignal(JSONObject response) {
 		// Assumes response_obj is a verified object
-		this.neo_id = response.get("neo_id").isString().stringValue();
+		this.setNeo_id(response.get("neo_id").isString().stringValue());
 		this.name 	= response.get("name").isString().stringValue();
 		
 		// parents assignments

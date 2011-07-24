@@ -16,7 +16,7 @@ public class Spike extends NeoData {
 	public Waveform waveform;
 	
 	public Spike(JSONObject obj) {
-		this.neo_id = obj.get("neo_id").isString().stringValue(); 
+		this.setNeo_id(obj.get("neo_id").isString().stringValue()); 
 		this.segment = obj.get("segment").isString().stringValue();
 		this.unit = obj.get("unit").isString().stringValue();
 		

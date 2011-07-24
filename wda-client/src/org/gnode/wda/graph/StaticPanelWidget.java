@@ -32,18 +32,18 @@ public class StaticPanelWidget extends Composite {
 		
 		options.setXAxisOptions(new AxisOptions().setTicks(5).setTickFormatter(new TickFormatter() {
             public String formatTickValue(double tickValue, Axis axis) {
-            	return tickValue + " " + analog.t_start.units;
+            	return tickValue + " " + analog.getT_start().getUnits();
             }
     	}));
 
 		
-		SeriesHandler handler = model.addSeries(analog.name);
+		SeriesHandler handler = model.addSeries(analog.getName());
 		
-		Double time = analog.t_start.data;
+		Double time = analog.getT_start().getData();
         // add data
-		for (Double point : analog.signal.data) {
+		for (Double point : analog.getSignal().getData()) {
 			handler.add(new DataPoint(time, point));
-			time += analog.sampling_rate.data;
+			time += analog.getSampling_rate().getData();
 		}
 		
         // create the plot

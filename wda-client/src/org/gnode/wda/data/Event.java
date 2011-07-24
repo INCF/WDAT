@@ -12,7 +12,7 @@ public class Event extends NeoData{
 	public String label;
 
 	public Event(JSONObject obj) {
-		this.neo_id = obj.get("neo_id").isString().stringValue(); 
+		this.setNeo_id(obj.get("neo_id").isString().stringValue()); 
 		// Assign parents
 		this.segment = obj.get("segment").isString().stringValue();
 		this.eventarray = obj.get("eventarray").isString().stringValue();

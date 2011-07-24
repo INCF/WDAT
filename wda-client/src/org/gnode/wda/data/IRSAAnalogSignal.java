@@ -19,7 +19,7 @@ public class IRSAAnalogSignal extends NeoData {
 	
 	public IRSAAnalogSignal(JSONObject response) {
 		// Assumes response_obj is a verified object
-		this.neo_id = response.get("neo_id").isString().stringValue();
+		this.setNeo_id(response.get("neo_id").isString().stringValue());
 		this.name 	= response.get("name").isString().stringValue();
 		
 		// parents assignments

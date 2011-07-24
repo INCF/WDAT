@@ -12,14 +12,13 @@ import ca.nanometrics.gflot.client.options.LineSeriesOptions;
 import ca.nanometrics.gflot.client.options.PlotOptions;
 import ca.nanometrics.gflot.client.options.PointsSeriesOptions;
 
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 
 public class MasterDetailPanelWidget extends Composite {
 	FlowPanel main;
-	PlotWithOverviewModel model;
 	PlotOptions options;
-	PlotWithOverview plot;
 	
 	public MasterDetailPanelWidget () {
 		this.main = new FlowPanel();
@@ -27,7 +26,6 @@ public class MasterDetailPanelWidget extends Composite {
 		//this.main.getElement().setAttribute("style", "width:600px;height:600px;");
 		
 		// Initialize the model
-		this.model = new PlotWithOverviewModel(PlotModelStrategy.downSamplingStrategy(10));
 		this.options = new PlotOptions();
 		this.options.setDefaultLineSeriesOptions(new LineSeriesOptions().setLineWidth(1).setShow(true));
 		this.options.setDefaultPointsOptions(new PointsSeriesOptions().setRadius(2).setShow(true));
@@ -35,25 +33,29 @@ public class MasterDetailPanelWidget extends Composite {
 		this.options.setYAxisOptions(new AxisOptions().setAutoscaleMargin(1.2));
 		
 		initWidget(this.main);
-		
-		// Initialize the plot
-		this.plot = new PlotWithOverview(this.model, this.options);
-		
 	}
 	
-	public void setData(AnalogSignal data) {
-		this.model.clear();
+	public void setData(AnalogSignal signal) {
+		this.main.clear();
 		
-		SeriesHandler series = this.model.addSeries(data.neo_id);
+		PlotWithOverviewModel model = new PlotWithOverviewModel(PlotModelStrategy.defaultStrategy());
 		
-		Double time = data.t_start.data;
+		SeriesHandler series = model.addSeries(signal.getNeo_id());
 		
-		for (Double point : data.signal.data ) {
+		Double time = signal.getT_start().getData();
+		
+		for (Double point : signal.getSignal().getData()) {
 			series.add(new DataPoint(time, point));
-			time += ( 1 / data.sampling_rate.data );
+			time += signal.getSampling_rate().getData();
 		}
 		
+		PlotWithOverview plot = new PlotWithOverview(model, this.options);
+		
+		// Calculate width of the plot
+		Integer width = Window.getClientWidth() - 300;
+		
+		plot.setWidth(width);
+		
 		this.main.add(plot);
-		this.plot.redraw();
-	}
+	}	
 }

@@ -5,6 +5,6 @@ import com.google.gwt.user.client.ui.Label;
 
 public class GraphHistoryWidget extends Composite {
 	public GraphHistoryWidget () {
-		initWidget(new Label("History"));
+		initWidget(new Label("History : This part will contain recently plotted itmes"));
 	}
 }
