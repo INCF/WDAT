@@ -1,6 +1,7 @@
 package org.gnode.wda.client;
 
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.Window;
 
@@ -11,7 +12,11 @@ public class Wda_client implements EntryPoint {
 		if ( sessionid == null ) {
 			// TODO this redirection fragment needs to use Window.location to ensure that 
 			// the user returns to the page he/she is trying to view in the first place.
-			Window.open("/account/login/?next=%2Fwda%2Fwda-client%2Fwar%2FWda_client.html%3F#explore:", "_self", "");
+			if (GWT.isProdMode()) {
+				Window.open("/account/login/?next=%2Fwda%2Fwda-client%2Fwar%2FWda_client.html%3F#explore:", "_self", "");
+			} else {
+				Window.open("/proxy/account/login/?next=%2Fwda%2Fwda-client%2Fwar%2FWda_client.html%3F#explore:", "_self", "");
+			}
 			return;
 		}		
 		

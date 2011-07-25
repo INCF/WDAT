@@ -6,6 +6,7 @@ import java.util.Vector;
 
 import org.gnode.wda.interfaces.DataSource;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
@@ -22,12 +23,27 @@ public class GnodeDataSource implements DataSource{
 	/* 
 	 * An g-node specific implementation of the DataSource interface.
 	 */
-	String prefix 				= "/";
-	String getObjectUrl 		= prefix + "neo/";
-	String getObjectDataUrl		= prefix + "neo/data/";
-	String getChildrenUrl		= prefix + "neo/children/";
-	String getParentsUrl		= prefix + "neo/parents/";
-	String getTypeUrl			= prefix + "neo/select/";
+	String getObjectUrl;
+	String getObjectDataUrl;
+	String getChildrenUrl;
+	String getParentsUrl;
+	String getTypeUrl;
+	
+	public GnodeDataSource() {
+		String prefix; 				
+		
+		if (GWT.isProdMode()) {
+			prefix = "/";
+		} else {
+			prefix = "/proxy/";
+		}
+		
+		getObjectUrl 		= prefix + "neo/";
+		getObjectDataUrl		= prefix + "neo/data/";
+		getChildrenUrl		= prefix + "neo/children/";
+		getParentsUrl		= prefix + "neo/parents/";
+		getTypeUrl			= prefix + "neo/select/";
+	}
 		
 	@Override
 	public void authenticate() {
