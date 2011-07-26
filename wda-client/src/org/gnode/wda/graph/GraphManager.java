@@ -7,6 +7,8 @@ import org.gnode.wda.data.Event;
 import org.gnode.wda.data.IRSAAnalogSignal;
 import org.gnode.wda.data.Spike;
 import org.gnode.wda.data.SpikeTrain;
+import org.gnode.wda.events.PlottableSelectionEvent;
+import org.gnode.wda.events.PlottableSelectionHandler;
 import org.gnode.wda.interfaces.DataSource;
 import org.gnode.wda.interfaces.GraphPresenter;
 import org.gnode.wda.interfaces.GraphView;
@@ -54,6 +56,13 @@ public class GraphManager implements GraphPresenter, ValueChangeHandler<String>{
 
 
 	private void setupEventHandlers() {
+		this.getBus().addHandler(PlottableSelectionEvent.TYPE, new PlottableSelectionHandler() {
+			@Override
+			public void onPlottableSelection(String neoId, String type) {
+				addHistory(neoId);
+				draw(neoId, type);
+			}
+		});
 	}
 
 
@@ -70,11 +79,11 @@ public class GraphManager implements GraphPresenter, ValueChangeHandler<String>{
 	
 	@Override
 	public void onValueChange(ValueChangeEvent<String> event) {
+		// History change handler
 		if (Utilities.getFragmentType(event.getValue()) == "plot") {
 			String neo_id = Utilities.getOption(event.getValue(), "obj");
 			String neo_type = Utilities.getOption(event.getValue(), "type");
-			this.addHistory(neo_id);		
-			this.draw(neo_id, neo_type);
+			this.getBus().fireEvent(new PlottableSelectionEvent(neo_id, neo_type));
 		} else {
 			// pass
 		}
