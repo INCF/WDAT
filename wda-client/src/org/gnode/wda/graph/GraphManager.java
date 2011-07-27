@@ -93,9 +93,6 @@ public class GraphManager implements GraphPresenter, ValueChangeHandler<String>{
 		}
 	}
 	
-	public void addHistory(String neo_id, String neo_type) {
-	}
-	
 	public void draw(String neo_id, final String type) {
 		this.ds.getData(neo_id, null, new RequestCallback() {
 			@Override
