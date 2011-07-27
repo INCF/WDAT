@@ -58,9 +58,13 @@ public class GraphManager implements GraphPresenter, ValueChangeHandler<String>{
 	private void setupEventHandlers() {
 		this.getBus().addHandler(PlottableSelectionEvent.TYPE, new PlottableSelectionHandler() {
 			@Override
-			public void onPlottableSelection(String neoId, String type) {
-				addHistory(neoId);
-				draw(neoId, type);
+			public void onPlottableSelection(String neo_id, String neo_type) {
+				if ( ! historyPanel.contains(neo_id)) {
+					// Check to see if history already contains the item.
+					historyPanel.addItem(neo_id, neo_type, neo_id);
+				}
+				historyPanel.setSelection(neo_id);
+				draw(neo_id, neo_type);
 			}
 		});
 	}
@@ -89,8 +93,7 @@ public class GraphManager implements GraphPresenter, ValueChangeHandler<String>{
 		}
 	}
 	
-	public void addHistory(String neo_id) {
-		// add to the history panel.
+	public void addHistory(String neo_id, String neo_type) {
 	}
 	
 	public void draw(String neo_id, final String type) {

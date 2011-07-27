@@ -1,4 +1,6 @@
 /**
+ * This is an extension of the GWT clean theme for the WDA-TOOL
+ *
  * The file contains styles for GWT widgets in the Clean theme.
  *
  * In order to maintain cross-browser compatibility, the following syntax is
@@ -1267,3 +1269,18 @@ td.datePickerMonth {
   max-height: 3px;
 }
 
+.graph-history-tab {
+    padding-top: 4px;
+    padding-bottom: 4px;
+    padding-right: 14px;
+    cursor: pointer;
+    border: 1px solid #666666;
+    border-radius: 4px;
+    margin-bottom: 3px;
+    font-weight: normal;
+}
+
+.graph-history-tab-selected {
+    background-color: #00aaff;
+    font-weight: bold;
+}
