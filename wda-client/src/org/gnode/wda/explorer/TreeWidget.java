@@ -7,6 +7,7 @@ import org.gnode.wda.data.NeoObject;
 import org.gnode.wda.interfaces.DataSource;
 
 import com.google.gwt.event.logical.shared.OpenHandler;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
@@ -31,7 +32,13 @@ public class TreeWidget extends Composite {
 	}
 	
 	public void setOpenHandler(OpenHandler<TreeItem> handler) {
+		// This will handle the click on the + buttons of the tree.
 		this.t.addOpenHandler(handler);
+	}
+	
+	public void setSelectionHandler(SelectionHandler<TreeItem> handler) {
+		// This will handle the seletion of the treeitems.
+		this.t.addSelectionHandler(handler);
 	}
 	
 	public void setChildren(TreeItem parent, List<NeoObject> children) {
@@ -42,10 +49,9 @@ public class TreeWidget extends Composite {
 		for ( NeoObject child : children ) {
 			TreeItem addendum = new TreeItem(child.name);
 			addendum.setTitle(child.type);
-			addendum.addItem(new TreeItem("contents"));
+			addendum.addItem(new TreeItem("<i>loading...</i>"));
 			parent.addItem(addendum);
 		}
-		parent.setState(true);
 	}
 
 	public void clearNodeChildren(TreeItem titem) {

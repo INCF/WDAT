@@ -103,6 +103,7 @@ public class GraphManager implements GraphPresenter, ValueChangeHandler<String>{
 						AnalogSignal analog = new AnalogSignal(obj);
 						// do analog plotting 
 						masterDetailPanel.setData(analog);
+						staticPanel.setGraph(analog);
 					}
 					if (type.equalsIgnoreCase("epoch")) {
 						Epoch epoch = new Epoch(obj);

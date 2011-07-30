@@ -81,9 +81,10 @@ public class AnalogSignal extends NeoData {
 		this.name 	= response.get("name").isString().stringValue();
 		
 		// parents assignments
-		this.analogsignalarray = response.get("analogsignalarray").isString().stringValue();
-		this.recordingchannel  = response.get("recordingchannel").isString().stringValue();
-		this.segment 		   = response.get("segment").isString().stringValue();
+		// TODO Ad-hoc removal of parents
+		//this.analogsignalarray = response.get("analogsignalarray").isString().stringValue();
+		//this.recordingchannel  = response.get("recordingchannel").isString().stringValue();
+		//this.segment 		   = response.get("segment").isString().stringValue();
 		
 		// data assignments
 		JSONObject jt_start = response.get("t_start").isObject();

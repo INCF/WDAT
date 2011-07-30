@@ -3,7 +3,6 @@ package org.gnode.wda.graph;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.IsWidget;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
@@ -38,6 +37,7 @@ public class GraphHistoryWidget extends Composite {
 	
 	private class PlottableEntry extends Label {
 		private String neo_id;
+		@SuppressWarnings("unused")
 		private Boolean selected;
 		
 		public PlottableEntry(final String neo_id, final String neo_type, String name, String width) {

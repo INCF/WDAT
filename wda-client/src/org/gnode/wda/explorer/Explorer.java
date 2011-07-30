@@ -13,6 +13,8 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.logical.shared.OpenEvent;
 import com.google.gwt.event.logical.shared.OpenHandler;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerManager;
@@ -64,12 +66,31 @@ public class Explorer implements ExplorerPresenter, ValueChangeHandler<String>, 
 			}
 		});
 		
+		
 		//this.localBus.addHandler(ExplorerTreeSelectionEvent.TYPE, this);
 		
 		this.tree.setOpenHandler(new OpenHandler<TreeItem>(){
 			@Override
 			public void onOpen(OpenEvent<TreeItem> event) {
+				// Unless the item is root, 
+				if (event.getTarget().getTitle().equals("")) 
+					return;
+				
 				setChildren(event.getTarget());
+				
+				event.getTarget().setState(true);
+			
+			}
+		});
+		
+		this.tree.setSelectionHandler(new SelectionHandler<TreeItem> () {
+			@Override
+			public void onSelection(SelectionEvent<TreeItem> event) {
+				// Unless the item is root,
+				if (event.getSelectedItem().getTitle().equals(""))
+					return;
+				
+				setChildren(event.getSelectedItem());
 			}
 		});
 		
@@ -126,7 +147,7 @@ public class Explorer implements ExplorerPresenter, ValueChangeHandler<String>, 
 	
 	public void setChildren(final TreeItem titem) {
 		this.localBus.fireEvent(new NotificationEvent("Getting data"));
-		this.tree.clearNodeChildren(titem);
+		
 		this.ds.getChildren(titem.getText(), new RequestCallback() {
 			@Override
 			public void onResponseReceived(Request request, Response response) {
