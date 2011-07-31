@@ -22,6 +22,7 @@ public abstract class BaseGraphPanel extends Composite {
 	PlotModel model;
 	PlotOptions options;
 	
+	
 	public BaseGraphPanel(Integer width, Integer height) {
 		this.height = height;
 		this.width = width;
@@ -37,11 +38,28 @@ public abstract class BaseGraphPanel extends Composite {
 		this.options = new PlotOptions();
 		
 		initWidget(main);
+		
+		this.model = new PlotModel();
+	}
+	
+	public void draw() {
+		this.main.clear();
+		
+		SimplePlot plot = new SimplePlot(this.model, this.options);
+		plot.setHeight(this.height -5);
+		plot.setWidth(this.width - 5);
+		
+		this.main.add(plot);
 	}
 	
 	public SeriesHandler addSeries(String label) {
-		SeriesHandler series = model.addSeries(label);
+		SeriesHandler series = this.model.addSeries(label);
 		return series;
+	}
+	
+	public void removeSeries(SeriesHandler series) {
+		// Removes a series from the model
+		this.model.removeSeries(series);
 	}
 	
 	public void clear() {

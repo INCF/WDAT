@@ -21,6 +21,7 @@ public class NeoObject{
 			this.type == "event" ||
 			this.type == "spike" ||
 			this.type == "spiketrain" ||
+			this.type == "segment" ||
 			this.type == "irsaanalogsignal" || 
 			this.type == "analogsignal" ) {
 			return true;

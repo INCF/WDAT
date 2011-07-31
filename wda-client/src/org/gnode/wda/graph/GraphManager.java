@@ -115,9 +115,11 @@ public class GraphManager implements GraphPresenter, ValueChangeHandler<String>{
 					if (type.equalsIgnoreCase("analogsignal")) {
 						AnalogSignal analog = new AnalogSignal(obj);
 						// do analog plotting 
-						
+						GraphPlotter plot = new GraphPlotter(analog, staticg.addSeries(analog.getName()));
+						staticg.draw();
 					}
 					if (type.equalsIgnoreCase("epoch")) {
+						
 						Epoch epoch = new Epoch(obj);
 						// do epoch plotting 
 						
