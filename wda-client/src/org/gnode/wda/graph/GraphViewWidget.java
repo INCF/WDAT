@@ -12,19 +12,25 @@ public class GraphViewWidget extends Composite implements GraphView {
 	SplitLayoutPanel split;
 	GraphHistoryWidget historyPanel;
 	VerticalPanel graphCard;
-	StaticPanelWidget staticPanel;
-	MasterDetailPanelWidget masterDetailPanel;
+	StaticGraphPanel staticg;
+	MasterGraphPanel masterg;
+	DetailGraphPanel detailg;
 
 	public GraphViewWidget(GraphHistoryWidget historyPanel,
-			StaticPanelWidget staticPanel, MasterDetailPanelWidget masterDetailPanel ) {
-		this.staticPanel = staticPanel;
-		this.masterDetailPanel = masterDetailPanel;
+			StaticGraphPanel staticg, MasterGraphPanel masterg, DetailGraphPanel detailg) {
 		this.historyPanel = historyPanel;
+		
+		// take care of arguments
+		this.staticg = staticg;
+		this.masterg = masterg;
+		this.detailg = detailg;
+		
 	
 		// create and populate the graph card
 		this.graphCard = new VerticalPanel();
-		this.graphCard.add(this.masterDetailPanel);
-		this.graphCard.add(this.staticPanel);
+		this.graphCard.add(this.detailg);
+		this.graphCard.add(this.masterg);
+		this.graphCard.add(this.staticg);
 		
 		this.split = new SplitLayoutPanel();
 		split.setPixelSize(Window.getClientWidth() -25, Window.getClientHeight() - 50);

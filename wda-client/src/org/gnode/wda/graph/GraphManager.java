@@ -28,21 +28,34 @@ public class GraphManager implements GraphPresenter, ValueChangeHandler<String>{
 	HandlerManager localBus;
 	DataSource ds;
 	GraphView dumbView;
-	StaticPanelWidget staticPanel;
-	MasterDetailPanelWidget masterDetailPanel;
+	StaticGraphPanel staticg;
+	DetailGraphPanel detailg;
+	MasterGraphPanel masterg;
 	GraphHistoryWidget historyPanel;
 	
 	
 	public GraphManager(DataSource ds) {
 		this.ds = ds;
 		this.localBus = new HandlerManager(null);
-		this.staticPanel = new StaticPanelWidget();
-		this.masterDetailPanel = new MasterDetailPanelWidget();
+		
+		// Calculate the widths and heights of the graph panels Using proportions
+		Integer graphsHeight = Window.getClientHeight() - 50;
+		Integer graphsWidth = Window.getClientWidth() - 300;
+		
+		Integer staticHeight = (int) (0.2 * graphsHeight);
+		Integer masterHeight = (int) (0.25 * graphsHeight); 
+		Integer detailHeight = (int) (0.55 * graphsHeight);
+		
+		
+		this.staticg = new StaticGraphPanel(graphsWidth, staticHeight);
+		this.masterg = new MasterGraphPanel(graphsWidth, masterHeight);
+		this.detailg = new DetailGraphPanel(graphsWidth, detailHeight);
 		this.historyPanel = new GraphHistoryWidget();
 		
 		this.dumbView = new GraphViewWidget(this.historyPanel,
-										    this.staticPanel,
-										    this.masterDetailPanel);
+										    this.staticg,
+										    this.masterg,
+										    this.detailg);
 		
 		History.addValueChangeHandler(this);
 		this.setupEventTriggers();
@@ -102,8 +115,7 @@ public class GraphManager implements GraphPresenter, ValueChangeHandler<String>{
 					if (type.equalsIgnoreCase("analogsignal")) {
 						AnalogSignal analog = new AnalogSignal(obj);
 						// do analog plotting 
-						masterDetailPanel.setData(analog);
-						staticPanel.setGraph(analog);
+						
 					}
 					if (type.equalsIgnoreCase("epoch")) {
 						Epoch epoch = new Epoch(obj);
