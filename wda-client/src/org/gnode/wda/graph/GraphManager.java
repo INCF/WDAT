@@ -2,16 +2,14 @@ package org.gnode.wda.graph;
 
 import org.gnode.wda.client.Utilities;
 import org.gnode.wda.data.AnalogSignal;
-import org.gnode.wda.data.Epoch;
-import org.gnode.wda.data.Event;
-import org.gnode.wda.data.IRSAAnalogSignal;
-import org.gnode.wda.data.Spike;
-import org.gnode.wda.data.SpikeTrain;
 import org.gnode.wda.events.PlottableSelectionEvent;
 import org.gnode.wda.events.PlottableSelectionHandler;
 import org.gnode.wda.interfaces.DataSource;
+import org.gnode.wda.interfaces.DatapointSource;
 import org.gnode.wda.interfaces.GraphPresenter;
 import org.gnode.wda.interfaces.GraphView;
+
+import ca.nanometrics.gflot.client.SeriesHandler;
 
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -24,7 +22,7 @@ import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
 
-public class GraphManager implements GraphPresenter, ValueChangeHandler<String>{
+public class GraphManager implements GraphPresenter, ValueChangeHandler<String>, PlottableSelectionHandler{
 	HandlerManager localBus;
 	DataSource ds;
 	GraphView dumbView;
@@ -69,17 +67,7 @@ public class GraphManager implements GraphPresenter, ValueChangeHandler<String>{
 
 
 	private void setupEventHandlers() {
-		this.getBus().addHandler(PlottableSelectionEvent.TYPE, new PlottableSelectionHandler() {
-			@Override
-			public void onPlottableSelection(String neo_id, String neo_type) {
-				if ( ! historyPanel.contains(neo_id)) {
-					// Check to see if history already contains the item.
-					historyPanel.addItem(neo_id, neo_type, neo_id);
-				}
-				historyPanel.setSelection(neo_id);
-				draw(neo_id, neo_type);
-			}
-		});
+		this.getBus().addHandler(PlottableSelectionEvent.TYPE, this); 
 	}
 
 
@@ -106,46 +94,40 @@ public class GraphManager implements GraphPresenter, ValueChangeHandler<String>{
 		}
 	}
 	
-	public void draw(String neo_id, final String type) {
-		this.ds.getData(neo_id, null, new RequestCallback() {
+	@Override
+	public void onPlottableSelection(String neoId, String type) {
+		// Handles the selection step of the plottable
+		
+		// Step 1 : add to history
+		if (!this.historyPanel.contains(neoId))
+			this.historyPanel.addItem(neoId, type, neoId);
+		this.historyPanel.setSelection(neoId);
+	
+		// Step 2 : display loading text
+		this.detailg.showLoading(true);
+		
+		// Step 3 : procure object parse to 
+		this.ds.getData(neoId, null, new RequestCallback() {
 			@Override
 			public void onResponseReceived(Request request, Response response) {
-				if (response.getStatusCode() == 200) {
-					JSONObject obj = JSONParser.parseLenient(response.getText()).isObject();
-					if (type.equalsIgnoreCase("analogsignal")) {
-						AnalogSignal analog = new AnalogSignal(obj);
-						// do analog plotting 
-						GraphPlotter plot = new GraphPlotter(analog, staticg.addSeries(analog.getName()));
-						staticg.draw();
-					}
-					if (type.equalsIgnoreCase("epoch")) {
-						
-						Epoch epoch = new Epoch(obj);
-						// do epoch plotting 
-						
-					}if (type.equalsIgnoreCase("event")) {
-						Event event = new Event(obj);
-						// do event plotting
-					}if (type.equalsIgnoreCase("irsaanalogsignal")) {
-						IRSAAnalogSignal irsaanalogsignal = new IRSAAnalogSignal(obj);
-						// process irsaa
-					}if (type.equalsIgnoreCase("spike")) {
-						Spike spike = new Spike(obj);
-						// process spike
-					}if (type.equalsIgnoreCase("spiketrain")) {
-						SpikeTrain spiketrain = new SpikeTrain(obj);
-						// process spiketrain
-					}
-				} else {
-					// Convey that an error on the server occured
-				}
+				detailg.showLoading(false);
+			
+				// parse response into JSON object now.
+				JSONObject obj = JSONParser.parseLenient(response.getText()).isObject();
+				DatapointSource analog = new AnalogSignal(obj);
+				
+				staticg.clear();
+				staticg.addSeries(analog.getName(), analog);
+				staticg.draw();
 			}
 			
 			@Override
 			public void onError(Request request, Throwable exception) {
-				Window.alert("Error receiving data");
+				// TODO Auto-generated method stub
+				
 			}
 		});
+		
 	}
 }
 

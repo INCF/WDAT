@@ -1,9 +1,13 @@
 package org.gnode.wda.data;
 
+import org.gnode.wda.interfaces.DatapointSource;
+
+import java.util.TreeMap;
+
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 
-public class AnalogSignal extends NeoData {
+public class AnalogSignal extends NeoData implements DatapointSource {
 	private String name;
 
 	// Parents. Contain neo IDs
@@ -101,5 +105,29 @@ public class AnalogSignal extends NeoData {
 		JSONArray jsignal_val = jsignal.get("data").isArray();
 		for (int i = 0; i < jsignal_val.size(); i++)
 			this.signal.addData(jsignal_val.get(i).isNumber().doubleValue());
+	}
+
+	@Override
+	public TreeMap<Double, Double> getDatapointSeries(int index) {
+		if (index != 0) // Can't be.
+			return null;
+		
+		TreeMap<Double, Double> hm = new TreeMap<Double, Double>();
+	
+		Double t = this.getT_start().getData();
+		Double t_increment = 1000 / this.getSampling_rate().getData();
+		
+		for ( Double point : this.getSignal().getData()) {
+			hm.put(t, point );
+			t += t_increment;
+		}
+		
+		return hm;
+	}
+
+	@Override
+	public int getDatapointSeriesCount() {
+		// Since an analogsignal has only one channel
+		return 1;
 	}
 }

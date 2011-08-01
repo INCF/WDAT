@@ -1,10 +1,16 @@
 package org.gnode.wda.graph;
 
+import org.gnode.wda.interfaces.DatapointSource;
+
+import ca.nanometrics.gflot.client.DataPoint;
 import ca.nanometrics.gflot.client.PlotModel;
 import ca.nanometrics.gflot.client.SeriesHandler;
 import ca.nanometrics.gflot.client.SimplePlot;
 import ca.nanometrics.gflot.client.options.PlotOptions;
 
+import java.util.TreeMap;
+
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -52,9 +58,15 @@ public abstract class BaseGraphPanel extends Composite {
 		this.main.add(plot);
 	}
 	
-	public SeriesHandler addSeries(String label) {
-		SeriesHandler series = this.model.addSeries(label);
-		return series;
+	public void addSeries(String label, DatapointSource dps) {
+		
+		for (int i =0; i < dps.getDatapointSeriesCount(); i++) {
+			SeriesHandler series = this.model.addSeries(label);
+			TreeMap<Double, Double> hm = dps.getDatapointSeries(i);
+			for ( Double index : hm.keySet()) {
+				series.add(new DataPoint(index, hm.get(index)));
+			}
+		}
 	}
 	
 	public void removeSeries(SeriesHandler series) {
@@ -63,7 +75,7 @@ public abstract class BaseGraphPanel extends Composite {
 	}
 	
 	public void clear() {
-		this.model.clear();
+		this.model = new PlotModel();
 		this.main.clear();
 	}
 }
