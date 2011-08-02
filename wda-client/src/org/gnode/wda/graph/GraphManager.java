@@ -2,6 +2,7 @@ package org.gnode.wda.graph;
 
 import org.gnode.wda.client.Utilities;
 import org.gnode.wda.data.AnalogSignal;
+import org.gnode.wda.data.IRSAAnalogSignal;
 import org.gnode.wda.events.PlottableSelectionEvent;
 import org.gnode.wda.events.PlottableSelectionHandler;
 import org.gnode.wda.interfaces.DataSource;
@@ -114,11 +115,12 @@ public class GraphManager implements GraphPresenter, ValueChangeHandler<String>,
 			
 				// parse response into JSON object now.
 				JSONObject obj = JSONParser.parseLenient(response.getText()).isObject();
-				DatapointSource analog = new AnalogSignal(obj);
+				DatapointSource analog = new IRSAAnalogSignal(obj);
 				
 				staticg.clear();
 				staticg.addSeries(analog.getName(), analog);
 				staticg.draw();
+				staticg.setupEventTriggers();
 			}
 			
 			@Override

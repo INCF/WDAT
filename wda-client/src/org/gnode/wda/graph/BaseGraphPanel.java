@@ -10,7 +10,6 @@ import ca.nanometrics.gflot.client.options.PlotOptions;
 
 import java.util.TreeMap;
 
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -51,9 +50,9 @@ public abstract class BaseGraphPanel extends Composite {
 	public void draw() {
 		this.main.clear();
 		
-		SimplePlot plot = new SimplePlot(this.model, this.options);
-		plot.setHeight(this.height -5);
-		plot.setWidth(this.width - 5);
+		this.plot = new SimplePlot(this.model, this.options);
+		this.plot.setHeight(this.height -5);
+		this.plot.setWidth(this.width - 5);
 		
 		this.main.add(plot);
 	}
