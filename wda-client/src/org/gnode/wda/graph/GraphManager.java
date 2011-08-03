@@ -1,8 +1,11 @@
 package org.gnode.wda.graph;
 
+import java.util.HashMap;
+
 import org.gnode.wda.client.Utilities;
 import org.gnode.wda.data.AnalogSignal;
-import org.gnode.wda.data.IRSAAnalogSignal;
+import org.gnode.wda.events.GraphUpdateEvent;
+import org.gnode.wda.events.GraphUpdateHandler;
 import org.gnode.wda.events.PlottableSelectionEvent;
 import org.gnode.wda.events.PlottableSelectionHandler;
 import org.gnode.wda.interfaces.DataSource;
@@ -10,7 +13,7 @@ import org.gnode.wda.interfaces.DatapointSource;
 import org.gnode.wda.interfaces.GraphPresenter;
 import org.gnode.wda.interfaces.GraphView;
 
-import ca.nanometrics.gflot.client.SeriesHandler;
+import ca.nanometrics.gflot.client.event.SelectionListener;
 
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -23,7 +26,7 @@ import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
 
-public class GraphManager implements GraphPresenter, ValueChangeHandler<String>, PlottableSelectionHandler{
+public class GraphManager implements GraphPresenter, ValueChangeHandler<String>, PlottableSelectionHandler, GraphUpdateHandler{
 	HandlerManager localBus;
 	DataSource ds;
 	GraphView dumbView;
@@ -31,6 +34,9 @@ public class GraphManager implements GraphPresenter, ValueChangeHandler<String>,
 	DetailGraphPanel detailg;
 	MasterGraphPanel masterg;
 	GraphHistoryWidget historyPanel;
+	// Downsampling resolution will be constant for a particular instance
+	// of WDAT. Why not use a global variable.
+	Integer downsampling;
 	
 	
 	public GraphManager(DataSource ds) {
@@ -44,7 +50,8 @@ public class GraphManager implements GraphPresenter, ValueChangeHandler<String>,
 		Integer staticHeight = (int) (0.2 * graphsHeight);
 		Integer masterHeight = (int) (0.25 * graphsHeight); 
 		Integer detailHeight = (int) (0.55 * graphsHeight);
-		
+	
+		this.downsampling = graphsWidth;
 		
 		this.staticg = new StaticGraphPanel(graphsWidth, staticHeight);
 		this.masterg = new MasterGraphPanel(graphsWidth, masterHeight);
@@ -69,6 +76,7 @@ public class GraphManager implements GraphPresenter, ValueChangeHandler<String>,
 
 	private void setupEventHandlers() {
 		this.getBus().addHandler(PlottableSelectionEvent.TYPE, this); 
+		this.getBus().addHandler(GraphUpdateEvent.TYPE, this);
 	}
 
 
@@ -107,29 +115,86 @@ public class GraphManager implements GraphPresenter, ValueChangeHandler<String>,
 		// Step 2 : display loading text
 		this.detailg.showLoading(true);
 		
-		// Step 3 : procure object parse to 
-		this.ds.getData(neoId, null, new RequestCallback() {
-			@Override
-			public void onResponseReceived(Request request, Response response) {
-				detailg.showLoading(false);
-			
-				// parse response into JSON object now.
-				JSONObject obj = JSONParser.parseLenient(response.getText()).isObject();
-				DatapointSource analog = new IRSAAnalogSignal(obj);
-				
-				staticg.clear();
-				staticg.addSeries(analog.getName(), analog);
-				staticg.draw();
-				staticg.setupEventTriggers();
-			}
-			
-			@Override
-			public void onError(Request request, Throwable exception) {
-				// TODO Auto-generated method stub
-				
-			}
-		});
+		// Step 3 : procure object parse to JSON and create a datapointSource of it. 
+		HashMap<String, String> requestData = new HashMap<String, String>();
+		requestData.put("downsample", "" + this.downsampling);
 		
+		this.localBus.fireEvent(new GraphUpdateEvent("static", neoId,type, requestData));
+	}
+
+
+	@Override
+	public void onGraphUpdate(String graphType, final String neoId, final String neoType,
+			HashMap<String, String> params) {
+		if (graphType.equalsIgnoreCase("static")) {
+			staticg.clear();
+			
+			this.ds.getData(neoId, params, new RequestCallback() {
+				@Override
+				public void onResponseReceived(Request request, Response response) {
+					staticg.clear();
+					
+					JSONObject obj = JSONParser.parseLenient(response.getText()).isObject();
+					final DatapointSource analog = new AnalogSignal(obj);
+					
+					staticg.clear();
+					staticg.addSeries(analog.getName(), analog);
+					staticg.draw();
+					staticg.addSelectionListener(new staticSelectionListener(neoId, neoType, ds, downsampling));
+				}
+				
+				@Override
+				public void onError(Request request, Throwable exception) {
+					// TODO Auto-generated method stub
+				}
+			});
+			
+		}
+	}
+	
+	private class staticSelectionListener implements SelectionListener {
+		/*
+		 * A selection listener used on the static panel that forwards 
+		 * selection events to the master graph panel.
+		 */
+	
+		String neo_id;
+		String neo_type;
+		DataSource ds;
+		Integer downsampling;
+		
+		public staticSelectionListener(String neo_id, String neo_type, DataSource ds, Integer downsampling) {
+			this.neo_id = neo_id;
+			this.neo_type = neo_type;
+			this.ds = ds;
+			this.downsampling = downsampling;
+		}
+		@Override
+		public void selected(double x1, double y1, double x2, double y2) {
+			HashMap<String, String> requestData = new HashMap<String, String>();
+			requestData.put("downsampling", "" + this.downsampling);
+			requestData.put("start_time", "" + x1);
+			requestData.put("end_time", "" + x2);
+			
+			this.ds.getData(this.neo_id, requestData, new RequestCallback() {
+				@Override
+				public void onResponseReceived(Request request, Response response) {
+					masterg.clear();
+					
+					JSONObject obj = JSONParser.parseLenient(response.getText()).isObject();
+					DatapointSource analog = new AnalogSignal(obj);
+					
+					masterg.addSeries(analog.getName(), analog);
+					masterg.draw();
+				}
+				
+				@Override
+				public void onError(Request request, Throwable exception) {
+					// TODO Auto-generated method stub
+					
+				}
+			});
+		}
 	}
 }
 

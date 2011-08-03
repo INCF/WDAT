@@ -1,10 +1,6 @@
 package org.gnode.wda.graph;
 
-import com.google.gwt.user.client.Window;
-
 import ca.nanometrics.gflot.client.event.SelectionListener;
-import ca.nanometrics.gflot.client.options.GridOptions;
-import ca.nanometrics.gflot.client.options.LineSeriesOptions;
 import ca.nanometrics.gflot.client.options.SelectionOptions;
 
 public class StaticGraphPanel extends BaseGraphPanel {
@@ -19,13 +15,8 @@ public class StaticGraphPanel extends BaseGraphPanel {
 		this.options.setSelectionOptions(new SelectionOptions().setMode(
 				SelectionOptions.X_SELECTION_MODE).setDragging(true));
 	}
-	
-	public void setupEventTriggers() {
-		this.plot.addSelectionListener(new SelectionListener() {
-			@Override
-			public void selected(double x1, double y1, double x2, double y2) {
-				Window.alert("");
-			}
-		});
+
+	public void addSelectionListener(SelectionListener listener) {
+		this.plot.addSelectionListener(listener);
 	}
 }

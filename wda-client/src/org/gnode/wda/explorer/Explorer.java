@@ -24,6 +24,11 @@ import com.google.gwt.http.client.Response;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.TreeItem;
 
+/*
+ * Explorer is the presenter for the explore tab. It enables you to browse
+ * your way through a neo data structure and then when you make a plot selection,
+ * conveys the event to the top EventBus as defined in the appcontroller class.
+ */
 public class Explorer implements ExplorerPresenter, ValueChangeHandler<String>, NotificationHandler{
 	HandlerManager localBus;
 	ExplorerView dumbView; // Named dumbview for reminding me.
@@ -65,9 +70,6 @@ public class Explorer implements ExplorerPresenter, ValueChangeHandler<String>, 
 				setTopLevel(tlsw.getSelection().toLowerCase());
 			}
 		});
-		
-		
-		//this.localBus.addHandler(ExplorerTreeSelectionEvent.TYPE, this);
 		
 		this.tree.setOpenHandler(new OpenHandler<TreeItem>(){
 			@Override

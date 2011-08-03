@@ -11,6 +11,7 @@ import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONException;
 import com.google.gwt.json.client.JSONObject;
@@ -75,8 +76,15 @@ public class GnodeDataSource implements DataSource{
 	@Override
 	public void getData(String oid, HashMap<String, String> params,
 			RequestCallback callback) {
-		String url = this.getObjectUrl + oid + "/";
+		
+		// Weirdly enough, requestData is not appended to the request. Will 
+		// do so manually
 		String requestData = "";
+		for (String key : params.keySet())
+			requestData += "&" + URL.encode(key) + "=" + URL.encode(params.get(key));
+		
+		String url = this.getObjectUrl + oid + "/?" + requestData;
+		
 		
 		this.transport(url, requestData, callback);
 	}
@@ -107,6 +115,9 @@ public class GnodeDataSource implements DataSource{
 
 	@Override
 	public List<NeoObject> parseType(Response response, String type) {
+		// ParseType parses a JSON response for a request to get all
+		// the objects of a specified type. via the /neo/select/<type>/ handle
+		
 		// Assume that the response codes are already evaluated.
 		Vector<NeoObject> rtn = new Vector<NeoObject>();
 
