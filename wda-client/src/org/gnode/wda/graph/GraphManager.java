@@ -113,7 +113,7 @@ public class GraphManager implements GraphPresenter, ValueChangeHandler<String>,
 		this.historyPanel.setSelection(neoId);
 	
 		// Step 2 : display loading text
-		this.detailg.showLoading(true);
+		//this.detailg.showLoading(true);
 		
 		// Step 3 : procure object parse to JSON and create a datapointSource of it. 
 		HashMap<String, String> requestData = new HashMap<String, String>();

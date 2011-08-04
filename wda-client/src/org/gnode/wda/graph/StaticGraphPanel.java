@@ -1,6 +1,5 @@
 package org.gnode.wda.graph;
 
-import ca.nanometrics.gflot.client.event.SelectionListener;
 import ca.nanometrics.gflot.client.options.SelectionOptions;
 
 public class StaticGraphPanel extends BaseGraphPanel {

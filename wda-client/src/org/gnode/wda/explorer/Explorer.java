@@ -135,6 +135,9 @@ public class Explorer implements ExplorerPresenter, ValueChangeHandler<String>, 
 					List<NeoObject> selected = ds.parseType(response, type);
 					
 					tree.setChildren(tree.root, selected);
+					
+					tree.openRoot();
+					// You would want the root to open up once the elements are loaded.
 				} else {
 					// TODO Communicate that data isn't being loaded. 
 				}

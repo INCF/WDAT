@@ -8,6 +8,7 @@ import org.gnode.wda.interfaces.DataSource;
 
 import com.google.gwt.event.logical.shared.OpenHandler;
 import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
@@ -59,5 +60,12 @@ public class TreeWidget extends Composite {
 		// tree Item. This should be used most commonly to clear 
 		// the "contents" marker of a container element.
 		titem.removeItems();
+	}
+	
+	public void openRoot() {
+		// Open the root element. Required by the Explorer class.
+		this.t.getItem(0).setState(true);
+		// Since it is the first one added, getItem(0) should return
+		// the root element.
 	}
 }

@@ -23,7 +23,7 @@ public class TopLevelSelectorWidget extends Composite {
 		
 		initWidget(main);
 		
-		main.add(new Label("By"));
+		main.add(new Label("Browse by :"));
 		main.add(this.lb);
 	}
 	
