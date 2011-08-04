@@ -6,6 +6,7 @@ import ca.nanometrics.gflot.client.DataPoint;
 import ca.nanometrics.gflot.client.PlotModel;
 import ca.nanometrics.gflot.client.SeriesHandler;
 import ca.nanometrics.gflot.client.SimplePlot;
+import ca.nanometrics.gflot.client.event.SelectionListener;
 import ca.nanometrics.gflot.client.options.PlotOptions;
 
 import java.util.TreeMap;
@@ -76,5 +77,9 @@ public abstract class BaseGraphPanel extends Composite {
 	public void clear() {
 		this.model = new PlotModel();
 		this.main.clear();
+	}
+	
+	public void addSelectionListener(SelectionListener listener) {
+		this.plot.addSelectionListener(listener);
 	}
 }

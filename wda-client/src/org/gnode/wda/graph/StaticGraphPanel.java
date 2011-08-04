@@ -16,7 +16,5 @@ public class StaticGraphPanel extends BaseGraphPanel {
 				SelectionOptions.X_SELECTION_MODE).setDragging(true));
 	}
 
-	public void addSelectionListener(SelectionListener listener) {
-		this.plot.addSelectionListener(listener);
-	}
+	
 }

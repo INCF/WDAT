@@ -140,7 +140,7 @@ public class GraphManager implements GraphPresenter, ValueChangeHandler<String>,
 					staticg.clear();
 					staticg.addSeries(analog.getName(), analog);
 					staticg.draw();
-					staticg.addSelectionListener(new staticSelectionListener(neoId, neoType, ds, downsampling));
+					staticg.addSelectionListener(new graphSelectionListener("master",  neoId, neoType, ds, downsampling));
 				}
 				
 				@Override
@@ -152,18 +152,20 @@ public class GraphManager implements GraphPresenter, ValueChangeHandler<String>,
 		}
 	}
 	
-	private class staticSelectionListener implements SelectionListener {
+	private class graphSelectionListener implements SelectionListener {
 		/*
-		 * A selection listener used on the static panel that forwards 
-		 * selection events to the master graph panel.
+		 * A selection listener used on the any panel that forwards 
+		 * selection events to the specified graph panel.
 		 */
 	
 		String neo_id;
 		String neo_type;
 		DataSource ds;
 		Integer downsampling;
+		String update_panel;
 		
-		public staticSelectionListener(String neo_id, String neo_type, DataSource ds, Integer downsampling) {
+		public graphSelectionListener(String which_panel_to_update, String neo_id, String neo_type, DataSource ds, Integer downsampling) {
+			this.update_panel = which_panel_to_update;
 			this.neo_id = neo_id;
 			this.neo_type = neo_type;
 			this.ds = ds;
@@ -179,13 +181,21 @@ public class GraphManager implements GraphPresenter, ValueChangeHandler<String>,
 			this.ds.getData(this.neo_id, requestData, new RequestCallback() {
 				@Override
 				public void onResponseReceived(Request request, Response response) {
-					masterg.clear();
+					BaseGraphPanel gpanel;
+					if (update_panel.equals("master"))
+						gpanel = masterg;
+					else 
+						gpanel = detailg;
+						
+						
+					gpanel.clear();
 					
 					JSONObject obj = JSONParser.parseLenient(response.getText()).isObject();
 					DatapointSource analog = new AnalogSignal(obj);
 					
-					masterg.addSeries(analog.getName(), analog);
-					masterg.draw();
+					gpanel.addSeries(analog.getName(), analog);
+					gpanel.draw();
+					gpanel.addSelectionListener(new graphSelectionListener("detail",  neo_id, neo_type, ds, downsampling));
 				}
 				
 				@Override
