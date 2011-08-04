@@ -1,2 +1,0 @@
-serviceClass: org.gnode.wda.client.GreetingService
-path: C86580CB7D030C00CA4D7DA6A3778A83.gwt.rpc
