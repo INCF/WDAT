@@ -29,9 +29,28 @@ public class NeoObject{
 		return false;
 	}
 	
+	public boolean isContainer() {
+		// Because some containers are plottable too.
+		if (this.type == "analogsignalarray" ||
+			this.type == "block" ||
+			this.type == "epocharray" ||
+			this.type == "eventarray" ||
+			this.type == "irsaanalogsignalarray" ||
+			this.type == "recordingchannel" ||
+			this.type == "recordingchannelgroup" ||
+			this.type == "segment" ) {
+			return true;
+		}
+		return false;
+	}
+	
 	public static List<String> getContainers() {
 		return Arrays.asList("analogsignalarray", "block", "epocharray", "eventarray",
 							"irsaanalogsignalarray", "recordingchannel", "recordingchannelgroup", "segment");
+	}
+	
+	public static List<String> getPlottables() {
+			return Arrays.asList("analogsignal", "irsaanalogsignal", "epoch", "event", "spike", "spiketrain", "segment");
 	}
 	
 	public static List<String> getChildrenTypes(String type) {
@@ -54,7 +73,7 @@ public class NeoObject{
 	public static List<NeoObject> getContainersOnly(List<NeoObject> selected) {
 		Vector<NeoObject> rtn = new Vector<NeoObject>();
 		for (NeoObject item : selected ) {
-			if ( !item.isPlottable() ) 
+			if ( item.isContainer() ) 
 				rtn.add(item);
 		}
 		return (List<NeoObject>)rtn;
