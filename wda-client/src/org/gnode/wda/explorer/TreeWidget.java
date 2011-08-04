@@ -46,6 +46,10 @@ public class TreeWidget extends Composite {
 		// we are supplying a new top-level type. For updating lists
 		// the parents should already be empty.
 		parent.removeItems();
+		if (children.size() == 0) {
+			parent.addItem(new TreeItem("<i>(empty)</i>"));
+			return;
+		}
 		for ( NeoObject child : children ) {
 			TreeItem addendum = new TreeItem(child.name);
 			addendum.setTitle(child.type);
