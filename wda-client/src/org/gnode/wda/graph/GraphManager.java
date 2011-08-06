@@ -51,7 +51,7 @@ public class GraphManager implements GraphPresenter, ValueChangeHandler<String>,
 		Integer masterHeight = (int) (0.25 * graphsHeight); 
 		Integer detailHeight = (int) (0.55 * graphsHeight);
 	
-		this.downsampling = graphsWidth;
+		this.downsampling = this.computeDownsampling(graphsWidth);
 		
 		this.staticg = new StaticGraphPanel(graphsWidth, staticHeight);
 		this.masterg = new MasterGraphPanel(graphsWidth, masterHeight);
@@ -66,6 +66,16 @@ public class GraphManager implements GraphPresenter, ValueChangeHandler<String>,
 		History.addValueChangeHandler(this);
 		this.setupEventTriggers();
 		this.setupEventHandlers();
+	}
+
+
+	private Integer computeDownsampling(Integer graphsWidth) {
+		Integer criticalDownsampling = 1000;
+		if ( graphsWidth > criticalDownsampling) {
+			return 1000;
+		}
+		
+		return graphsWidth;
 	}
 
 
