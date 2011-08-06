@@ -2,6 +2,8 @@
 
 package org.gnode.wda.data;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.TreeMap;
 
 import org.gnode.wda.interfaces.DatapointSource;
@@ -10,12 +12,8 @@ import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 
 public class IRSAAnalogSignal extends NeoData implements DatapointSource{
-	public String name;
+	private String name;
 	
-	// Parents. Contain neo IDs
-	public String recordingchannel;
-	public String segment;
-
 	// data 
 	private Quantity t_start;
 
@@ -23,14 +21,48 @@ public class IRSAAnalogSignal extends NeoData implements DatapointSource{
 	
 	private QuantityList signal;
 	
+	@Override
+	public String getName() {
+		// TODO Auto-generated method stub
+		return name;
+	}
+	
+	public void setT_start(Quantity t_start) {
+		this.t_start = t_start;
+	}
+
+	public Quantity getT_start() {
+		return t_start;
+	}
+
+	public void setTimes(QuantityList times) {
+		this.times = times;
+	}
+
+	public QuantityList getTimes() {
+		return times;
+	}
+
+	public void setSignal(QuantityList signal) {
+		this.signal = signal;
+	}
+
+	public QuantityList getSignal() {
+		return signal;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	public IRSAAnalogSignal(JSONObject response) {
 		// Assumes response_obj is a verified object
 		this.setNeo_id(response.get("neo_id").isString().stringValue());
-		this.name 	= response.get("name").isString().stringValue();
+		this.setName(response.get("name").isString().stringValue());
 		
 		// parents assignments
-		//this.recordingchannel  = response.get("recordingchannel").isString().stringValue();
-		//this.segment 		   = response.get("segment").isString().stringValue();
+		List<String> parent_keys = Arrays.asList("recordingchannel", "segment");
+		this.parseParents(response, parent_keys);
 		
 		// data assignments
 		JSONObject jt_start = response.get("t_start").isObject();
@@ -76,34 +108,5 @@ public class IRSAAnalogSignal extends NeoData implements DatapointSource{
 	public int getDatapointSeriesCount() {
 		return 1; // Has to, since there is only one channel on an irsaanalogsignal
 	}
-
-	@Override
-	public String getName() {
-		// TODO Auto-generated method stub
-		return name;
-	}
-
-	public void setT_start(Quantity t_start) {
-		this.t_start = t_start;
-	}
-
-	public Quantity getT_start() {
-		return t_start;
-	}
-
-	public void setTimes(QuantityList times) {
-		this.times = times;
-	}
-
-	public QuantityList getTimes() {
-		return times;
-	}
-
-	public void setSignal(QuantityList signal) {
-		this.signal = signal;
-	}
-
-	public QuantityList getSignal() {
-		return signal;
-	}
+	
 }

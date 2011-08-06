@@ -2,18 +2,15 @@ package org.gnode.wda.data;
 
 import org.gnode.wda.interfaces.DatapointSource;
 
+import java.util.Arrays;
 import java.util.TreeMap;
+import java.util.List;
 
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 
 public class AnalogSignal extends NeoData implements DatapointSource {
 	private String name;
-
-	// Parents. Contain neo IDs
-	private String analogsignalarray;
-	private String recordingchannel;
-	private String segment;
 
 	// data 
 	private Quantity t_start;
@@ -31,27 +28,27 @@ public class AnalogSignal extends NeoData implements DatapointSource {
 	}
 
 	public String getAnalogsignalarray() {
-		return analogsignalarray;
+		return this.parents.get("analogsignalarray");
 	}
 
 	public void setAnalogsignalarray(String analogsignalarray) {
-		this.analogsignalarray = analogsignalarray;
+		this.parents.put("analogsignalarray", analogsignalarray);
 	}
 
 	public String getRecordingchannel() {
-		return recordingchannel;
+		return this.parents.get("recordingchannel");
 	}
 
 	public void setRecordingchannel(String recordingchannel) {
-		this.recordingchannel = recordingchannel;
+		this.parents.put("recordingchannel", recordingchannel);
 	}
 
 	public String getSegment() {
-		return segment;
+		return this.parents.get("segment");
 	}
 
 	public void setSegment(String segment) {
-		this.segment = segment;
+		this.parents.put("segment", segment);
 	}
 
 	public Quantity getT_start() {
@@ -85,10 +82,8 @@ public class AnalogSignal extends NeoData implements DatapointSource {
 		this.name 	= response.get("name").isString().stringValue();
 		
 		// parents assignments
-		// TODO Ad-hoc removal of parents
-		//this.analogsignalarray = response.get("analogsignalarray").isString().stringValue();
-		//this.recordingchannel  = response.get("recordingchannel").isString().stringValue();
-		//this.segment 		   = response.get("segment").isString().stringValue();
+		List<String> parent_keys = Arrays.asList("analogsignalarray", "recordingchannel", "segment");
+		this.parseParents(response, parent_keys);
 		
 		// data assignments
 		JSONObject jt_start = response.get("t_start").isObject();
