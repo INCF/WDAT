@@ -26,7 +26,8 @@ import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
 
-public class GraphManager implements GraphPresenter, ValueChangeHandler<String>, PlottableSelectionHandler, GraphUpdateHandler{
+public abstract class GraphManager implements GraphPresenter, ValueChangeHandler<String>, PlottableSelectionHandler, GraphUpdateHandler{
+	// making it abstract since it is no longer valid.
 	HandlerManager localBus;
 	DataSource ds;
 	GraphView dumbView;
@@ -107,13 +108,12 @@ public class GraphManager implements GraphPresenter, ValueChangeHandler<String>,
 		if (Utilities.getFragmentType(event.getValue()) == "plot") {
 			String neo_id = Utilities.getOption(event.getValue(), "obj");
 			String neo_type = Utilities.getOption(event.getValue(), "type");
-			this.getBus().fireEvent(new PlottableSelectionEvent(neo_id, neo_type));
+			//this.getBus().fireEvent(new PlottableSelectionEvent(neo_id, neo_type));
 		} else {
 			// pass
 		}
 	}
 	
-	@Override
 	public void onPlottableSelection(String neoId, String type) {
 		// Handles the selection step of the plottable
 		

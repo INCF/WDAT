@@ -9,7 +9,9 @@ import ca.nanometrics.gflot.client.SimplePlot;
 import ca.nanometrics.gflot.client.event.SelectionListener;
 import ca.nanometrics.gflot.client.options.PlotOptions;
 
+import java.util.List;
 import java.util.TreeMap;
+import java.util.Vector;
 
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -27,11 +29,15 @@ public abstract class BaseGraphPanel extends Composite {
 	SimplePlot plot;
 	PlotModel model;
 	PlotOptions options;
+	List<String> neo_ids; // let each graph panel maintain its own list 
+						  // of plotted elements. Will be updated on 
+						  // calling the addSeries method.
 	
 	
 	public BaseGraphPanel(Integer width, Integer height) {
 		this.height = height;
 		this.width = width;
+		this.neo_ids = new Vector<String>();
 	
 		// Create and display the vertical panel. Displaying is necessary since
 		// gflot doesn't draw on it if it is not displayed.
@@ -44,7 +50,7 @@ public abstract class BaseGraphPanel extends Composite {
 		this.options = new PlotOptions();
 		
 		initWidget(main);
-		
+	
 		this.model = new PlotModel();
 	}
 	
@@ -59,6 +65,9 @@ public abstract class BaseGraphPanel extends Composite {
 	}
 	
 	public void addSeries(String label, DatapointSource dps) {
+		if (this.neo_ids.contains(dps.getNeo_id())) {
+			return;
+		}
 		
 		for (int i =0; i < dps.getDatapointSeriesCount(); i++) {
 			SeriesHandler series = this.model.addSeries(label);

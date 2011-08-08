@@ -2,7 +2,7 @@ package org.gnode.wda.client;
 
 import org.gnode.wda.data.GnodeDataSource;
 import org.gnode.wda.explorer.Explorer;
-import org.gnode.wda.graph.GraphManager;
+import org.gnode.wda.graph.GraphManager2;
 import org.gnode.wda.interfaces.DataSource;
 import org.gnode.wda.interfaces.ExplorerPresenter;
 import org.gnode.wda.interfaces.GraphPresenter;
@@ -32,7 +32,7 @@ public class AppController implements ValueChangeHandler<String>{
 	public AppController() {
 		this.ds = new GnodeDataSource();
 		this.explorer = new Explorer(ds);
-		this.graph = new GraphManager(ds);
+		this.graph = new GraphManager2(ds);
 		this.tabs = new TabPanel();
 	}
 

@@ -1274,13 +1274,14 @@ td.datePickerMonth {
     padding-bottom: 4px;
     padding-right: 14px;
     cursor: pointer;
-    border: 1px solid #666666;
+    border: 1px solid #888888;
     border-radius: 4px;
     margin-bottom: 3px;
     font-weight: normal;
 }
 
 .graph-history-tab-selected {
-    background-color: #00aaff;
+    background-color: #4496C9;
+    color: #ffffff;
     font-weight: bold;
 }

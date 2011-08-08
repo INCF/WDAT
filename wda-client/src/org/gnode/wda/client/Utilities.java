@@ -1,5 +1,8 @@
 package org.gnode.wda.client;
 
+import java.util.List;
+import java.util.Vector;
+
 public class Utilities {
 	public static String getFragmentType(String token) {
 		if (token.startsWith("explore:")) return "explore";
@@ -17,5 +20,15 @@ public class Utilities {
 			}
 		}
 		return "";
+	}
+	
+	public static List<String> parseCSV(String token) {
+		Vector<String> rtn = new Vector<String>();
+		
+		for (String item : token.split(",") ) {
+			rtn.add(item);
+		}
+		
+		return rtn;
 	}
 }

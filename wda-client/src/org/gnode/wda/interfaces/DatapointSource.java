@@ -7,4 +7,5 @@ public interface DatapointSource {
 	public TreeMap<Double, Double> getDatapointSeries(int index);
 	
 	public String getName();
+	public String getNeo_id();
 }
