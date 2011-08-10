@@ -23,12 +23,12 @@ public abstract class NeoData {
 		this.parents = new HashMap<String, String>();
 		
 		for (String parent : parent_keys) {
-			try {
-				this.parents.put(parent, obj.get(parent).isString().stringValue());
-			} 
-			catch (NullPointerException e) {
-				this.parents.put(parent, null);
-			}
+			//try {
+			//	this.parents.put(parent, obj.get(parent).isString().stringValue());
+			//} 
+			//catch (NullPointerException e) {
+			//  this.parents.put(parent, null);
+			//}
 		}
 	}
 }
