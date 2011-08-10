@@ -4175,7 +4175,6 @@ org_gnode_wda_data_NeoData_$parseParents__Lorg_gnode_wda_data_NeoData_2Lcom_goog
 $setNeo_id,org.gnode.wda.data.NeoData::$setNeo_id(Lorg/gnode/wda/data/NeoData;Ljava/lang/String;)V,org.gnode.wda.data.NeoData,$setNeo_id,file:/home/caesar/code/wda/wda-client/src/org/gnode/wda/data/NeoData.java,12
 org_gnode_wda_data_NeoData_getClass__Ljava_lang_Class_2,org.gnode.wda.data.NeoData::getClass()Ljava/lang/Class;,org.gnode.wda.data.NeoData,getClass,file:/home/caesar/code/wda/wda-client/src/org/gnode/wda/data/NeoData.java,8
 org_gnode_wda_data_NeoData_neo_1id,org.gnode.wda.data.NeoData::neo_id,org.gnode.wda.data.NeoData,neo_id,file:/home/caesar/code/wda/wda-client/src/org/gnode/wda/data/NeoData.java,9
-org_gnode_wda_data_NeoData_parents,org.gnode.wda.data.NeoData::parents,org.gnode.wda.data.NeoData,parents,file:/home/caesar/code/wda/wda-client/src/org/gnode/wda/data/NeoData.java,10
 org_gnode_wda_data_NeoObject,,org.gnode.wda.data.NeoObject,,file:/home/caesar/code/wda/wda-client/src/org/gnode/wda/data/NeoObject.java,8
 $clinit,org.gnode.wda.data.NeoObject::$clinit()V,org.gnode.wda.data.NeoObject,$clinit,file:/home/caesar/code/wda/wda-client/src/org/gnode/wda/data/NeoObject.java,8
 org_gnode_wda_data_NeoObject_$isContainer__Lorg_gnode_wda_data_NeoObject_2Z,org.gnode.wda.data.NeoObject::$isContainer(Lorg/gnode/wda/data/NeoObject;)Z,org.gnode.wda.data.NeoObject,$isContainer,file:/home/caesar/code/wda/wda-client/src/org/gnode/wda/data/NeoObject.java,32
