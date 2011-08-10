@@ -9,6 +9,7 @@ import ca.nanometrics.gflot.client.SimplePlot;
 import ca.nanometrics.gflot.client.event.SelectionListener;
 import ca.nanometrics.gflot.client.options.PlotOptions;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.Vector;
@@ -32,7 +33,7 @@ public abstract class BaseGraphPanel extends Composite {
 	List<String> neo_ids; // let each graph panel maintain its own list 
 						  // of plotted elements. Will be updated on 
 						  // calling the addSeries method.
-	
+	HashMap<String, SeriesHandler> series_map;
 	
 	public BaseGraphPanel(Integer width, Integer height) {
 		this.height = height;
@@ -48,6 +49,7 @@ public abstract class BaseGraphPanel extends Composite {
 		
 		// setup the plot options
 		this.options = new PlotOptions();
+		this.series_map = new HashMap<String, SeriesHandler>();
 		
 		initWidget(main);
 	
@@ -75,12 +77,14 @@ public abstract class BaseGraphPanel extends Composite {
 			for ( Double index : hm.keySet()) {
 				series.add(new DataPoint(index, hm.get(index)));
 			}
+			this.series_map.put(dps.getNeo_id(), series);
 		}
 	}
 	
-	public void removeSeries(SeriesHandler series) {
+	public void removeSeries(String neo_id) {
 		// Removes a series from the model
-		this.model.removeSeries(series);
+		this.model.removeSeries(this.series_map.get(neo_id));
+		this.series_map.remove(neo_id);
 	}
 	
 	public void clear() {

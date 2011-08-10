@@ -10,7 +10,6 @@ import org.gnode.wda.interfaces.GraphPresenter;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TabPanel;
@@ -47,10 +46,20 @@ public class AppController implements ValueChangeHandler<String>{
 		RootPanel.get().add(this.tabs);
 		
 		// Based on the url fragment, change the tab
-		String hash = Window.Location.getHash();
-		this.tabs.selectTab(1);
-		if (hash.startsWith("#plot")) this.tabs.selectTab(0);
-		if (hash.startsWith("#explore")) this.tabs.selectTab(1);
+		String hash = History.getToken(); 
+		if (Utilities.getOption(hash, "view") == "") {
+			// If there is no view selected, default to explore. 
+			History.newItem("view=explore");
+			this.tabs.selectTab(1);
+		} 
+		
+		if (Utilities.getOption(hash, "view").equals("explore") ) {
+			this.tabs.selectTab(1);
+		}
+		else if (Utilities.getOption(hash, "view").equals("graph") ) {
+			this.tabs.selectTab(0);
+		}
+		
 		History.fireCurrentHistoryState(); // This is required to support page refresh.
 										   // browsers don't fire History change events
 										   // on page refresh.
@@ -65,10 +74,10 @@ public class AppController implements ValueChangeHandler<String>{
 	public void onValueChange(ValueChangeEvent<String> event) {
 		// This value change handler only changes the tab. 
 		// Other presenter level handlers handle their own stuff.
-		if (Utilities.getFragmentType(event.getValue()) == "plot") {
+		if (Utilities.getOption(event.getValue(), "view").equals("graph")) {
 			this.tabs.selectTab(0);
 		}
-		if (Utilities.getFragmentType(event.getValue()) == "explore") {
+		if (Utilities.getOption(event.getValue(), "view").equals("explore")) {
 			this.tabs.selectTab(1);
 		}
 	}

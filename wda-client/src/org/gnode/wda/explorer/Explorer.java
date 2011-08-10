@@ -120,8 +120,6 @@ public class Explorer implements ExplorerPresenter, ValueChangeHandler<String>, 
 			}
 		}
 		else {
-			// somehow, if this else block doesn't exist, the appcontroller 
-			// valuechangehandler is not triggered.
 		}*/
 	}
 	

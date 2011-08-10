@@ -1281,7 +1281,7 @@ td.datePickerMonth {
 }
 
 .graph-history-tab-selected {
-    background-color: #4496C9;
-    color: #ffffff;
-    font-weight: bold;
+    background-color: #BFE7FF;
+    color: #333333;
+    font-weight: normal;
 }

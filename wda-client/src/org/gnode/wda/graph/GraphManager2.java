@@ -2,7 +2,6 @@ package org.gnode.wda.graph;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Vector;
 
 import org.gnode.wda.client.Utilities;
 import org.gnode.wda.data.AnalogSignal;
@@ -41,12 +40,11 @@ public class GraphManager2 implements GraphPresenter,
 	// so declare it as a class property.
 	Integer downsample;
 	
-	List<String> currentGraphs;
+	//List<String> currentGraphs;
+	// This is not a good idea. There are race conditions involved in async workflows!
 	// currentGraphs contains NEO ids of all the graphs that are 
 	// *already* plotted in the graph panels.
 
-	List<String> currentTypes;
-	// Corresponds to the currentGraphs list
 	
 	Double masterStart, masterEnd;
 	Double detailStart, detailEnd;
@@ -79,8 +77,6 @@ public class GraphManager2 implements GraphPresenter,
 											this.detailg);
 		
 		// Initialize these to avoid NullPointer conflicts.
-		this.currentGraphs = new Vector<String>();
-		this.currentTypes = new Vector<String>();
 		this.detailEnd = 0.0;
 		this.detailStart = 0.0;
 		this.masterEnd = 0.0;
@@ -103,16 +99,15 @@ public class GraphManager2 implements GraphPresenter,
 	}
 	@Override
 	public void onValueChange(ValueChangeEvent<String> event) {
-		// Generate list of neos being requested to be plotted. 
-		List<String> neo_ids = Utilities.parseCSV(
-										Utilities.getOption(event.getValue(), "obj")
-										);
-		List<String> neo_types = Utilities.parseCSV(
-										Utilities.getOption(event.getValue(), "type")
-										);
-		
-		// fire the required event. 
-		this.getBus().fireEvent(new PlottableSelectionEvent(neo_ids, neo_types));
+		if (Utilities.getOption(event.getValue(), "view").equals("graph") ) {
+			// Generate list of neos being requested to be plotted. 
+			List<String> neo_ids = Utilities.parseCSV(
+											Utilities.getOption(event.getValue(), "obj")
+											);
+			
+			// fire the required event. 
+			this.getBus().fireEvent(new PlottableSelectionEvent(neo_ids));
+		}
 	}
 	@Override
 	public HandlerManager getBus() {
@@ -125,49 +120,43 @@ public class GraphManager2 implements GraphPresenter,
 	}
 
 	@Override
-	public void onPlottableSelection(final List<String> neo_ids, final List<String> types ) {
-		List<String> requests = new Vector<String>();
-		// this list will contain the neo's that need to be fetched. ie aren't already
-		// plotted in staticg
+	public void onPlottableSelection(final List<String> neo_ids) {
+		// Update the history widget
+		this.historyPanel.clearSelections();
 		
-		// Check whether any of the already ploted signals needs to be removed
-		// and then remove them.
-		for (String neo : this.currentGraphs) {
-			if ( ! neo_ids.contains(neo) ) {
-				this.currentTypes.remove(this.currentGraphs.indexOf(neo));
-				this.currentGraphs.remove(neo);
-			}
+		for (String neo : neo_ids ) {
+			String neo_type = neo.split("_", 2)[0];
+			this.historyPanel.addItem(neo, neo_type, neo, true);
 		}
 		
-		// for each neo_id that isn't already a part of the currentGraphs, add 
-		// them to currentGraphs
-		for ( String neo : neo_ids ) {
-			if ( ! this.currentGraphs.contains(neo) ) {
-				this.currentGraphs.add(neo);
-				this.currentTypes.add(types.get(neo_ids.indexOf(neo)));
-				requests.add(neo);
-			}
-		}
+		// Clear the static graphs.
+		staticg.clear();
 	
 		// request parameter initialization
 		HashMap<String, String> requestData = new HashMap<String, String>();
 		requestData.put("downsample", "" + this.downsample);
 		
 		// Updating staticg s.
-		for ( final String neo : requests ) {
+		for ( final String neo : neo_ids) {
+			
 			this.ds.getData(neo, requestData, new RequestCallback() {
 				@Override
 				public void onResponseReceived(Request request, Response response) {
 					JSONObject obj = JSONParser.parseLenient(response.getText()).isObject();
 					
 					DatapointSource dps;
-					if ( types.get(neo_ids.indexOf(neo)).equals("analogsignal") ) {
+					String neo_type = neo.split("_", 2)[0];
+					
+					if (neo_type.equals("analogsignal") ) {
 						dps = new AnalogSignal(obj);
 					} 
 					else {
 						// TODO The default case. Type not specified.
 						return;
 					}
+					
+					// Update history, 
+					//historyPanel.addItem(neo, neo.split("_", 1)[0], dps.getName(), true);
 					
 					staticg.addSeries(dps.getName(), dps);
 					staticg.draw();
@@ -180,6 +169,8 @@ public class GraphManager2 implements GraphPresenter,
 				}
 			});
 		}
+		
+		// Make history widget selections 
 	}
 	
 	private class graphSelectionListener implements SelectionListener {
@@ -189,7 +180,7 @@ public class GraphManager2 implements GraphPresenter,
 		 * 
 		 * However, this is done to separate the two. If new developments cause
 		 * a different API to be implemented, this repetition can also be viewed 
-		 * as a flexibility ensurer. 
+		 * as a flexibile design-decision. 
 		 * 
 		 */
 		String graph_type;
@@ -205,21 +196,26 @@ public class GraphManager2 implements GraphPresenter,
 				// Obvously, this needs to be done.Static doesn't change when 
 				// the same neo_obj is reloaded. master will change. 
 				// TODO show loading
-				
+				List<String> currentGraphs = Utilities.parseCSV(Utilities.getOption(History.getToken(), "obj"));
 				
 				HashMap<String, String> requestData = new HashMap<String, String>();
 				requestData.put("downsample", "" + downsample);
 				requestData.put("start_time", "" + x1);
 				requestData.put("end_time", "" + x2);
-			
+		
+				// update the current selection fields.
+				masterStart = x1;
+				masterEnd   = x2;
+				
+				
 				for ( final String neo : currentGraphs ) {
 					ds.getData(neo, requestData, new RequestCallback() {
 						@Override
 						public void onResponseReceived(Request request, Response response) {
 							DatapointSource dps;
 							JSONObject obj = JSONParser.parseLenient(response.getText()).isObject();
-							
-							if ( currentTypes.get(currentGraphs.indexOf(neo)).equals("analogsignal")) {
+							String neo_type = neo.split("_", 2)[0];
+							if ( neo_type.equals("analogsignal")) {
 								dps = new AnalogSignal(obj);
 							}
 							else {
@@ -246,20 +242,26 @@ public class GraphManager2 implements GraphPresenter,
 				// the same neo_obj is reloaded. master will change. 
 				// TODO show loading
 				
+				List<String> currentGraphs = Utilities.parseCSV(Utilities.getOption(History.getToken(), "obj"));
+				
 				
 				HashMap<String, String> requestData = new HashMap<String, String>();
 				requestData.put("downsample", "" + downsample);
 				requestData.put("start_time", "" + x1);
 				requestData.put("end_time", "" + x2);
 			
+				// update the current selection fields.
+				detailStart = x1;
+				detailEnd	= x2;
+				
 				for ( final String neo : currentGraphs ) {
 					ds.getData(neo, requestData, new RequestCallback() {
 						@Override
 						public void onResponseReceived(Request request, Response response) {
 							DatapointSource dps;
 							JSONObject obj = JSONParser.parseLenient(response.getText()).isObject();
-							
-							if ( currentTypes.get(currentGraphs.indexOf(neo)).equals("analogsignal")) {
+							String neo_type = neo.split("_",2)[0];
+							if ( neo_type.equals("analogsignal")) {
 								dps = new AnalogSignal(obj);
 							}
 							else {

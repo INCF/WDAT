@@ -9,10 +9,8 @@ public class PlottableSelectionEvent extends GwtEvent<PlottableSelectionHandler>
 	List<String> type;
 	boolean append;
 	
-	public PlottableSelectionEvent(List<String> neoIds, List<String> neoTypes ) {
-		// Type refers to neo_type
+	public PlottableSelectionEvent(List<String> neoIds ) {
 		this.neo_id = neoIds;
-		this.type = neoTypes;
 	}
 	public static final Type<PlottableSelectionHandler> TYPE = new 
 		Type<PlottableSelectionHandler>();
@@ -24,6 +22,6 @@ public class PlottableSelectionEvent extends GwtEvent<PlottableSelectionHandler>
 
 	@Override
 	protected void dispatch(PlottableSelectionHandler handler) {
-		handler.onPlottableSelection(this.neo_id, this.type);
+		handler.onPlottableSelection(this.neo_id);
 	}
 }
