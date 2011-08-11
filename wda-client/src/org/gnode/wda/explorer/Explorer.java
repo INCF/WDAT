@@ -2,9 +2,9 @@ package org.gnode.wda.explorer;
 
 import java.util.List;
 
+
+import org.gnode.wda.client.Utilities;
 import org.gnode.wda.data.NeoObject;
-import org.gnode.wda.events.NotificationHandler;
-import org.gnode.wda.events.NotificationEvent;
 import org.gnode.wda.interfaces.DataSource;
 import org.gnode.wda.interfaces.ExplorerPresenter;
 import org.gnode.wda.interfaces.ExplorerView;
@@ -22,6 +22,7 @@ import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.user.client.History;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.TreeItem;
 
 /*
@@ -29,7 +30,7 @@ import com.google.gwt.user.client.ui.TreeItem;
  * your way through a neo data structure and then when you make a plot selection,
  * conveys the event to the top EventBus as defined in the appcontroller class.
  */
-public class Explorer implements ExplorerPresenter, ValueChangeHandler<String>, NotificationHandler{
+public class Explorer implements ExplorerPresenter, ValueChangeHandler<String> {
 	HandlerManager localBus;
 	ExplorerView dumbView; // Named dumbview for reminding me.
 	MainWidget main;
@@ -62,7 +63,7 @@ public class Explorer implements ExplorerPresenter, ValueChangeHandler<String>, 
 	
 	public void setupEventHandlers() {
 		History.addValueChangeHandler(this);
-		this.localBus.addHandler(NotificationEvent.TYPE, this);
+		
 		
 		this.tlsw.setChangeHandler(new ChangeHandler(){
 			@Override
@@ -92,7 +93,9 @@ public class Explorer implements ExplorerPresenter, ValueChangeHandler<String>, 
 				if (event.getSelectedItem().getTitle().equals(""))
 					return;
 				
-				setMainItems(event.getSelectedItem());
+				String parent_neo_id = event.getSelectedItem().getText();
+				String newToken = Utilities.setValue("container", parent_neo_id);
+				History.newItem(newToken);
 			}
 		});
 		
@@ -111,15 +114,13 @@ public class Explorer implements ExplorerPresenter, ValueChangeHandler<String>, 
 
 	@Override
 	public void onValueChange(ValueChangeEvent<String> event) {
-		/*
-		if (Utilities.getFragmentType(event.getValue()) == "explore") {
-			String top = Utilities.getOption(event.getValue(), "top_level");
-			if (top != "" && top != "select") {
-				setTopLevel(top);
+		// History change handler
+		if ( Utilities.getOption(event.getValue(), "view").equals("explore")) {
+			String container = Utilities.getOption(event.getValue(), "container");
+			if ( ! container.equals("") ) {
+				setMainItems(container);
 			}
 		}
-		else {
-		}*/
 	}
 	
 	public void setTopLevel(final String type) {
@@ -165,8 +166,8 @@ public class Explorer implements ExplorerPresenter, ValueChangeHandler<String>, 
 		});
 	}
 	
-	public void setMainItems(final TreeItem titem) {
-		this.ds.getChildren(titem.getText(), new RequestCallback() {
+	public void setMainItems(final String parent_neo_id) {
+		this.ds.getChildren(parent_neo_id, new RequestCallback() {
 			@Override
 			public void onError(Request request, Throwable exception) {
 				// TODO Auto-generated method stub
@@ -175,16 +176,12 @@ public class Explorer implements ExplorerPresenter, ValueChangeHandler<String>, 
 			@Override
 			public void onResponseReceived(Request request, Response response) {
 				if (response.getStatusCode() == 200) {
-					List<NeoObject> selected = ds.parseChildren(response, titem.getTitle());
+					String neo_type = parent_neo_id.split("_", 2)[0];
+					List<NeoObject> selected = ds.parseChildren(response, neo_type);
 					
 					main.setData(NeoObject.getPlottablesOnly(selected));
 				}
 			}
 		});
-	}
-	
-	@Override
-	public void onNotification(String message) {
-		//this.notification.publish(message);
 	}
 }

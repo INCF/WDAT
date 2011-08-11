@@ -8,14 +8,8 @@ import com.google.gwt.user.client.History;
 
 public class Utilities {
 	public static String getOption(String token, String key) {
-		String [] options = token.split("&");
-		
-		for (String item : options) {
-			if (item.startsWith(key)) {
-				return item.split("=", 2)[1].toLowerCase();
-			}
-		}
-		return "";
+		Token t = new Token(token);
+		return t.getOption(key);
 	}
 	
 	public static List<String> parseCSV(String token) {
@@ -31,64 +25,25 @@ public class Utilities {
 		return rtn;
 	}
 
-	public static String removeObjectFromGraphUrl(String neo_id) {
-		String currentToken = History.getToken();
-		String [] options = currentToken.split("&");
-		String objParams = "";
-		String rtn = "";
+	public static String setValue(String key, String value) {
+		Token t = new Token(History.getToken());
+		t.setOption(key, value);
 		
-		for ( String item : options ) {
-			if ( item.startsWith("obj") ) {
-				String [] parts = item.split(neo_id);
-				
-				if ( parts.length == 2 ) {
-					objParams += parts[0] + parts[1].substring(1);
-				} else {
-					objParams += parts[0];
-				}
-			}
-		}
-		
-		for ( String item : options ) {
-			if ( ! item.startsWith("obj") ) {
-				rtn += item;
-			} else {
-				rtn += "&" + objParams;
-			}
-		}
-		
-		return rtn;
+		return t.getToken();
 	}
+	public static String removeObjectFromGraphUrl(String neo_id) {
+		// convenience methods. does what it says. 
+		Token t = new Token(History.getToken());
+		t.updateOption("obj", neo_id, true);
+		
+		return t.getToken();
+	}
+	
 	public static String updateGraphUrlWithAnotherObject(String neo_id) {
-		String currentToken = History.getToken();
-		String [] options = currentToken.split("&");
-		String objParams = "";
-		String rtn = "";
+		// convenience methods. does what it says. 
+		Token t = new Token(History.getToken());
+		t.updateOption("obj", neo_id, false);
 		
-		// Disassemble the token.
-		for (String item : options ) {
-			if (item.startsWith("obj")) {
-				objParams = item;
-				break;
-			}
-		}
-		
-		String objects = objParams.split("=", 2)[1].toLowerCase();
-		if (objects.contains(neo_id)) {
-			return currentToken;
-		}
-		
-		objects += "," + neo_id;
-		
-		// Reassemble the token. I miss python !
-		for (String item : options) {
-			if ( ! item.startsWith("obj") ) {
-				rtn += "&" + item;
-			} else {
-				rtn += "&obj=" + objects;
-			}
-		}
-		
-		return rtn;
+		return t.getToken();
 	}
 }
