@@ -96,7 +96,6 @@ public class Explorer implements ExplorerPresenter, ValueChangeHandler<String>, 
 			}
 		});
 		
-		this.localBus.fireEvent(new NotificationEvent("Setup Event Handlers"));
 	}
 	
 	@Override
@@ -124,12 +123,10 @@ public class Explorer implements ExplorerPresenter, ValueChangeHandler<String>, 
 	}
 	
 	public void setTopLevel(final String type) {
-		this.localBus.fireEvent(new NotificationEvent("Getting Data"));
 		this.ds.getType(type, new RequestCallback() {
 			@Override
 			public void onResponseReceived(Request request, Response response) {
 				if (response.getStatusCode() == 200) {
-					localBus.fireEvent(new NotificationEvent("Received data."));
 					List<NeoObject> selected = ds.parseType(response, type);
 					
 					tree.setChildren(tree.root, selected);
@@ -149,8 +146,6 @@ public class Explorer implements ExplorerPresenter, ValueChangeHandler<String>, 
 	}
 	
 	public void setTreeChildren(final TreeItem titem) {
-		this.localBus.fireEvent(new NotificationEvent("Getting data"));
-		
 		this.ds.getChildren(titem.getText(), new RequestCallback() {
 			@Override
 			public void onResponseReceived(Request request, Response response) {
