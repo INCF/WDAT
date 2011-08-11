@@ -7,6 +7,8 @@ import org.gnode.wda.interfaces.DataSource;
 import org.gnode.wda.interfaces.ExplorerPresenter;
 import org.gnode.wda.interfaces.GraphPresenter;
 
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.History;
@@ -43,6 +45,7 @@ public class AppController implements ValueChangeHandler<String>{
 		 */
 		this.tabs.add((IsWidget)this.graph.getView(), "Graph");
 		this.tabs.add((IsWidget)this.explorer.getView(), "Explorer");
+		
 		RootPanel.get().add(this.tabs);
 		
 		// Based on the url fragment, change the tab
@@ -68,6 +71,23 @@ public class AppController implements ValueChangeHandler<String>{
 	public void setupEvents() {
 		History.addValueChangeHandler(this);
 		// Only for tab selection.
+		this.tabs.addSelectionHandler(new SelectionHandler<Integer>() {
+			
+			@Override
+			public void onSelection(SelectionEvent<Integer> event) {
+				Token t = new Token(History.getToken());
+				
+				if (event.getSelectedItem() == 1) {
+					// explore view selected.
+					t.setOption("view", "explore");
+				} else if (event.getSelectedItem() == 0) {
+					// graph selected
+					t.setOption("view", "graph");
+				}
+				
+				History.newItem(t.getToken(), false);
+			}
+		});
 	}
 	
 	@Override
