@@ -35,23 +35,23 @@ public class Explorer implements ExplorerPresenter, ValueChangeHandler<String>, 
 	MainWidget main;
 	TreeWidget tree;
 	TopLevelSelectorWidget tlsw;
-	NotificationArea notification;
+	//NotificationArea notification;
 	DataSource ds; 
 	
 	public Explorer(DataSource ds) {
 		this.localBus = new HandlerManager(null);
 	
 		this.ds = ds; 
-
+		
 		// initialize all widgets
 		this.main = new MainWidget();
 		this.tree = new TreeWidget(this.ds);
 		this.tlsw = new TopLevelSelectorWidget();
-		this.notification = new NotificationArea();
+		//this.notification = new NotificationArea();
 		
 		// initialize the view that contains all the widgets
 		// this view is so dumb, that it only has a constructor.
-		this.dumbView = new ExplorerViewWidget(this.main, this.tree, this.tlsw, this.notification);
+		this.dumbView = new ExplorerViewWidget(this.main, this.tree, this.tlsw);//, this.notification);
 
 		this.setupEventTriggers();
 		this.setupEventHandlers();
@@ -78,7 +78,7 @@ public class Explorer implements ExplorerPresenter, ValueChangeHandler<String>, 
 				if (event.getTarget().getTitle().equals("")) 
 					return;
 				
-				setChildren(event.getTarget());
+				setTreeChildren(event.getTarget());
 				
 				event.getTarget().setState(true);
 			
@@ -92,7 +92,7 @@ public class Explorer implements ExplorerPresenter, ValueChangeHandler<String>, 
 				if (event.getSelectedItem().getTitle().equals(""))
 					return;
 				
-				setChildren(event.getSelectedItem());
+				setMainItems(event.getSelectedItem());
 			}
 		});
 		
@@ -148,19 +148,17 @@ public class Explorer implements ExplorerPresenter, ValueChangeHandler<String>, 
 		});
 	}
 	
-	public void setChildren(final TreeItem titem) {
+	public void setTreeChildren(final TreeItem titem) {
 		this.localBus.fireEvent(new NotificationEvent("Getting data"));
 		
 		this.ds.getChildren(titem.getText(), new RequestCallback() {
 			@Override
 			public void onResponseReceived(Request request, Response response) {
 				if (response.getStatusCode() == 200) {
-					localBus.fireEvent(new NotificationEvent("Received data"));
 					List<NeoObject> selected = ds.parseChildren(response, titem.getTitle());
 					
 					// we need to filter out all the plottable objects here. 
 					tree.setChildren(titem, NeoObject.getContainersOnly(selected));
-					main.setData(NeoObject.getPlottablesOnly(selected));
 				}
 			}
 
@@ -171,9 +169,27 @@ public class Explorer implements ExplorerPresenter, ValueChangeHandler<String>, 
 			}
 		});
 	}
+	
+	public void setMainItems(final TreeItem titem) {
+		this.ds.getChildren(titem.getText(), new RequestCallback() {
+			@Override
+			public void onError(Request request, Throwable exception) {
+				// TODO Auto-generated method stub
+			}
 
+			@Override
+			public void onResponseReceived(Request request, Response response) {
+				if (response.getStatusCode() == 200) {
+					List<NeoObject> selected = ds.parseChildren(response, titem.getTitle());
+					
+					main.setData(NeoObject.getPlottablesOnly(selected));
+				}
+			}
+		});
+	}
+	
 	@Override
 	public void onNotification(String message) {
-		this.notification.publish(message);
+		//this.notification.publish(message);
 	}
 }

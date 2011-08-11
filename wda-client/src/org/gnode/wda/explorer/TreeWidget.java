@@ -47,7 +47,7 @@ public class TreeWidget extends Composite {
 		// the parents should already be empty.
 		parent.removeItems();
 		if (children.size() == 0) {
-			parent.addItem(new TreeItem("<i>(empty)</i>"));
+			parent.addItem(new TreeItem("<i>(no containers)</i>"));
 			return;
 		}
 		for ( NeoObject child : children ) {

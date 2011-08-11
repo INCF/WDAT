@@ -20,8 +20,7 @@ public class ExplorerViewWidget extends Composite implements ExplorerView {
 	
 	public ExplorerViewWidget(MainWidget main,
 								TreeWidget tree,
-								TopLevelSelectorWidget tlsw,
-								NotificationArea notification) {
+								TopLevelSelectorWidget tlsw) {
 	
 		// assignments 
 		this.split = new SplitLayoutPanel();
@@ -42,7 +41,7 @@ public class ExplorerViewWidget extends Composite implements ExplorerView {
 		
 		// populate the splitPanel
 		split.addWest((IsWidget)leftStack, 250);
-		split.addSouth(notification, 100);
+//		split.addSouth(notification, 100);
 		split.add(main);
 		split.setPixelSize(Window.getClientWidth() -25, Window.getClientHeight() - 50);
 		
