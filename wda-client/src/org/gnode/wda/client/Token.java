@@ -14,6 +14,8 @@ public class Token {
 		
 		for ( String pair : key_value_pairs ) {
 			String key = pair.split("=", 2)[0];
+			if (key.equals(""))
+				continue;
 			String value = pair.split("=", 2)[1];
 			
 			this.data.put(key, value);
