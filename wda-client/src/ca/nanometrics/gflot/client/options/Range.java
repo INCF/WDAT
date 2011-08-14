@@ -13,6 +13,13 @@ public class Range extends JSONObjectWrapper {
 		super();
 	}
 
+	public Range(Double from, Double to) {
+		super();
+		put("from", from);
+		put("to", to);
+
+	}
+
 	public Range(Integer from, Integer to) {
 		super();
 		put("from", from);
@@ -20,11 +27,11 @@ public class Range extends JSONObjectWrapper {
 
 	}
 
-	public void setFrom(Integer from) {
+	public void setFrom(Double from) {
 		put("from", from);
 	}
 
-	public void setTo(Integer to) {
+	public void setTo(Double to) {
 		put("to", to);
 	}
 
