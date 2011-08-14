@@ -6,12 +6,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.TreeMap;
 
-import org.gnode.wda.interfaces.DatapointSource;
+import org.gnode.wda.interfaces.GraphDataAdapter;
 
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 
-public class IRSAAnalogSignal extends NeoData implements DatapointSource{
+public class IRSAAnalogSignal extends NeoData implements GraphDataAdapter{
 	private String name;
 	
 	// data 
@@ -107,6 +107,22 @@ public class IRSAAnalogSignal extends NeoData implements DatapointSource{
 	@Override
 	public int getDatapointSeriesCount() {
 		return 1; // Has to, since there is only one channel on an irsaanalogsignal
+	}
+
+	@Override
+	public Double getFrom(int index) {
+		return null;
+	}
+
+	@Override
+	public int getMarkingSeriesCount() {
+		// An IrSaAnalogsignal has no markings so return 0
+		return 0;
+	}
+
+	@Override
+	public Double getTo(int index) {
+		return null;
 	}
 	
 }

@@ -1,6 +1,6 @@
 package org.gnode.wda.data;
 
-import org.gnode.wda.interfaces.DatapointSource;
+import org.gnode.wda.interfaces.GraphDataAdapter;
 
 import java.util.Arrays;
 import java.util.TreeMap;
@@ -9,7 +9,7 @@ import java.util.List;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 
-public class AnalogSignal extends NeoData implements DatapointSource {
+public class AnalogSignal extends NeoData implements GraphDataAdapter {
 	private String name;
 
 	// data 
@@ -124,5 +124,21 @@ public class AnalogSignal extends NeoData implements DatapointSource {
 	public int getDatapointSeriesCount() {
 		// Since an analogsignal has only one channel
 		return 1;
+	}
+
+	@Override
+	public Double getFrom(int index) {
+		return null;
+	}
+
+	@Override
+	public int getMarkingSeriesCount() {
+		// A lone analogsignal has no Markings
+		return 0;
+	}
+
+	@Override
+	public Double getTo(int index) {
+		return null;
 	}
 }

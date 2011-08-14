@@ -22,13 +22,13 @@ public abstract class NeoData {
 		// parent's accessor ids are defined in parent_keys
 		this.parents = new HashMap<String, String>();
 		
-		for (String parent : parent_keys) {
+		//for (String parent : parent_keys) {
 			//try {
 			//	this.parents.put(parent, obj.get(parent).isString().stringValue());
 			//} 
 			//catch (NullPointerException e) {
 			//  this.parents.put(parent, null);
 			//}
-		}
+		//}
 	}
 }

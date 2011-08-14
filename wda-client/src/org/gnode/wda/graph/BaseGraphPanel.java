@@ -1,12 +1,13 @@
 package org.gnode.wda.graph;
 
-import org.gnode.wda.interfaces.DatapointSource;
+import org.gnode.wda.interfaces.GraphDataAdapter;
 
 import ca.nanometrics.gflot.client.DataPoint;
 import ca.nanometrics.gflot.client.PlotModel;
 import ca.nanometrics.gflot.client.SeriesHandler;
 import ca.nanometrics.gflot.client.SimplePlot;
 import ca.nanometrics.gflot.client.event.SelectionListener;
+import ca.nanometrics.gflot.client.options.Marking;
 import ca.nanometrics.gflot.client.options.PlotOptions;
 
 import java.util.HashMap;
@@ -66,13 +67,21 @@ public abstract class BaseGraphPanel extends Composite {
 		this.main.add(plot);
 	}
 	
-	public void addSeries(String label, DatapointSource dps) {
+	public void addSeries(String label, GraphDataAdapter dps) {
 		if (this.neo_ids.contains(dps.getNeo_id())) {
 			return;
+		}
+
+		for (int i = 0; i< dps.getMarkingSeriesCount(); i++) {
+			Double to = dps.getTo(i);
+			Double from = dps.getFrom(i);
+			Marking m = new Marking();
+			//m.setX(new DoubleRange(from, to));
 		}
 		
 		for (int i =0; i < dps.getDatapointSeriesCount(); i++) {
 			SeriesHandler series = this.model.addSeries(label);
+			
 			TreeMap<Double, Double> hm = dps.getDatapointSeries(i);
 			for ( Double index : hm.keySet()) {
 				series.add(new DataPoint(index, hm.get(index)));

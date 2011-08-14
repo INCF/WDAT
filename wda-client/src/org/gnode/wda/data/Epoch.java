@@ -1,11 +1,15 @@
+
 package org.gnode.wda.data;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.TreeMap;
+
+import org.gnode.wda.interfaces.GraphDataAdapter;
 
 import com.google.gwt.json.client.JSONObject;
 
-public class Epoch extends NeoData{
+public class Epoch extends NeoData implements GraphDataAdapter {
 	
 	private String label;
 	private Quantity time;
@@ -68,5 +72,46 @@ public class Epoch extends NeoData{
 		this.setDuration(new Quantity(jduration.get("units").isString().stringValue(),
 								  	 jduration.get("data").isNumber().doubleValue()));
 	
+	}
+
+	
+	@Override
+	public TreeMap<Double, Double> getDatapointSeries(int index) {
+		return null;
+	}
+
+	@Override
+	public int getDatapointSeriesCount() {
+		// An epoch can't have data series. Only markings
+		return 0;
+	}
+
+	@Override
+	public String getName() {
+		// TODO Auto-generated method stub
+		return "Epoch";
+	}
+
+	@Override
+	public Double getFrom(int index) {
+		// TODO Auto-generated method stub
+		return this.getTime().getData();
+	}
+
+	@Override
+	public int getMarkingSeriesCount() {
+		// What else?
+		return 1;
+	}
+
+	@Override
+	public Double getTo(int index) {
+		return this.getTime().getData() + this.getDuration().getData();
+	}
+
+	@Override
+	public void setName(String name) {
+		// TODO Auto-generated method stub
+		
 	}
 }

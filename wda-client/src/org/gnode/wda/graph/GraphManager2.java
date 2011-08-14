@@ -5,10 +5,11 @@ import java.util.List;
 
 import org.gnode.wda.client.Utilities;
 import org.gnode.wda.data.AnalogSignal;
+import org.gnode.wda.data.IRSAAnalogSignal;
 import org.gnode.wda.events.PlottableSelectionEvent;
 import org.gnode.wda.events.PlottableSelectionHandler;
 import org.gnode.wda.interfaces.DataSource;
-import org.gnode.wda.interfaces.DatapointSource;
+import org.gnode.wda.interfaces.GraphDataAdapter;
 import org.gnode.wda.interfaces.GraphPresenter;
 import org.gnode.wda.interfaces.GraphView;
 
@@ -142,25 +143,25 @@ public class GraphManager2 implements GraphPresenter,
 			this.ds.getData(neo, requestData, new RequestCallback() {
 				@Override
 				public void onResponseReceived(Request request, Response response) {
-					JSONObject obj = JSONParser.parseLenient(response.getText()).isObject();
+					if (response.getStatusCode() == 200) {
+						JSONObject obj = JSONParser.parseLenient(response.getText()).isObject();
+						
+						GraphDataAdapter dps;
+						String neo_type = neo.split("_", 2)[0];
+						
+						dps = create_dps_of_type(obj, neo_type);
+						
+						if (dps == null) {
+							return;
+						}
 					
-					DatapointSource dps;
-					String neo_type = neo.split("_", 2)[0];
+						// Update history, 
+						//historyPanel.addItem(neo, neo.split("_", 1)[0], dps.getName(), true);
 					
-					if (neo_type.equals("analogsignal") ) {
-						dps = new AnalogSignal(obj);
-					} 
-					else {
-						// TODO The default case. Type not specified.
-						return;
+						staticg.addSeries(dps.getName(), dps);
+						staticg.draw();
+						staticg.addSelectionListener(new graphSelectionListener("static"));
 					}
-					
-					// Update history, 
-					//historyPanel.addItem(neo, neo.split("_", 1)[0], dps.getName(), true);
-					
-					staticg.addSeries(dps.getName(), dps);
-					staticg.draw();
-					staticg.addSelectionListener(new graphSelectionListener("static"));		
 				}
 				@Override
 				public void onError(Request request, Throwable exception) {
@@ -212,20 +213,19 @@ public class GraphManager2 implements GraphPresenter,
 					ds.getData(neo, requestData, new RequestCallback() {
 						@Override
 						public void onResponseReceived(Request request, Response response) {
-							DatapointSource dps;
-							JSONObject obj = JSONParser.parseLenient(response.getText()).isObject();
-							String neo_type = neo.split("_", 2)[0];
-							if ( neo_type.equals("analogsignal")) {
-								dps = new AnalogSignal(obj);
+							if (response.getStatusCode() == 200) {
+								GraphDataAdapter dps;
+								JSONObject obj = JSONParser.parseLenient(response.getText()).isObject();
+								String neo_type = neo.split("_", 2)[0];
+								
+								dps = create_dps_of_type(obj, neo_type);
+								if (dps == null) {
+									return;
+								}
+								masterg.addSeries(dps.getName(), dps);
+								masterg.draw();
+								masterg.addSelectionListener(new graphSelectionListener("master"));
 							}
-							else {
-								// default case
-								return;
-							}
-							
-							masterg.addSeries(dps.getName(), dps);
-							masterg.draw();
-							masterg.addSelectionListener(new graphSelectionListener("master"));
 						}
 						
 						@Override
@@ -258,21 +258,21 @@ public class GraphManager2 implements GraphPresenter,
 					ds.getData(neo, requestData, new RequestCallback() {
 						@Override
 						public void onResponseReceived(Request request, Response response) {
-							DatapointSource dps;
-							JSONObject obj = JSONParser.parseLenient(response.getText()).isObject();
-							String neo_type = neo.split("_",2)[0];
-							if ( neo_type.equals("analogsignal")) {
-								dps = new AnalogSignal(obj);
+							if (response.getStatusCode() == 200) {
+								GraphDataAdapter dps;
+								JSONObject obj = JSONParser.parseLenient(response.getText()).isObject();
+								String neo_type = neo.split("_",2)[0];
+								
+								dps = create_dps_of_type(obj, neo_type);
+								if (dps == null) {
+									return;
+								}
+								
+								detailg.addSeries(dps.getName(), dps);
+								detailg.draw();
 							}
-							else {
-								// default case
-								return;
-							}
-							
-							detailg.addSeries(dps.getName(), dps);
-							detailg.draw();
-							detailg.addSelectionListener(new graphSelectionListener("master"));
 						}
+						
 						
 						@Override
 						public void onError(Request request, Throwable exception) {
@@ -283,5 +283,15 @@ public class GraphManager2 implements GraphPresenter,
 				}	
 			}
 		}
+	}
+	
+	private GraphDataAdapter create_dps_of_type(JSONObject obj, String neo_type) {
+		if (neo_type.equals("analogsignal") ) {
+			return new AnalogSignal(obj);
+		} 
+		else if (neo_type.equals("irsaanalogsignal") ) {
+			return new IRSAAnalogSignal(obj);
+		}
+		return null;
 	}
 }
