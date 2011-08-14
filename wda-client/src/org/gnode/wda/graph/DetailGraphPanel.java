@@ -1,7 +1,6 @@
 package org.gnode.wda.graph;
 
 import ca.nanometrics.gflot.client.event.PlotHoverListener;
-import ca.nanometrics.gflot.client.options.GridOptions;
 import ca.nanometrics.gflot.client.options.LineSeriesOptions;
 import ca.nanometrics.gflot.client.options.PointsSeriesOptions;
 
@@ -15,7 +14,7 @@ public class DetailGraphPanel extends BaseGraphPanel {
 		this.options.setDefaultShadowSize(0);
 		
 		// set it to hoverable
-		this.options.setGridOptions(new GridOptions().setHoverable(true));
+		this.options.setGridOptions(this.gridOptions.setHoverable(true));
 		
 	}
 	

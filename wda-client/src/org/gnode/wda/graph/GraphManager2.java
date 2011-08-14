@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.gnode.wda.client.Utilities;
 import org.gnode.wda.data.AnalogSignal;
+import org.gnode.wda.data.Epoch;
+import org.gnode.wda.data.Event;
 import org.gnode.wda.data.IRSAAnalogSignal;
 import org.gnode.wda.events.PlottableSelectionEvent;
 import org.gnode.wda.events.PlottableSelectionHandler;
@@ -291,6 +293,12 @@ public class GraphManager2 implements GraphPresenter,
 		} 
 		else if (neo_type.equals("irsaanalogsignal") ) {
 			return new IRSAAnalogSignal(obj);
+		}
+		else if (neo_type.equals("epoch")) {
+			return new Epoch(obj);
+		}
+		else if (neo_type.equals("event")) {
+			return new Event(obj);
 		}
 		return null;
 	}

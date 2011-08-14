@@ -7,14 +7,18 @@ import ca.nanometrics.gflot.client.PlotModel;
 import ca.nanometrics.gflot.client.SeriesHandler;
 import ca.nanometrics.gflot.client.SimplePlot;
 import ca.nanometrics.gflot.client.event.SelectionListener;
+import ca.nanometrics.gflot.client.options.GridOptions;
 import ca.nanometrics.gflot.client.options.Marking;
+import ca.nanometrics.gflot.client.options.Markings;
 import ca.nanometrics.gflot.client.options.PlotOptions;
+import ca.nanometrics.gflot.client.options.Range;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.Vector;
 
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -35,6 +39,8 @@ public abstract class BaseGraphPanel extends Composite {
 						  // of plotted elements. Will be updated on 
 						  // calling the addSeries method.
 	HashMap<String, SeriesHandler> series_map;
+	Markings markings;
+	GridOptions gridOptions;
 	
 	public BaseGraphPanel(Integer width, Integer height) {
 		this.height = height;
@@ -55,10 +61,14 @@ public abstract class BaseGraphPanel extends Composite {
 		initWidget(main);
 	
 		this.model = new PlotModel();
+		this.markings = new Markings();
+		this.gridOptions = new GridOptions();
 	}
 	
 	public void draw() {
 		this.main.clear();
+		this.gridOptions = this.gridOptions.setMarkings(this.markings);
+		this.options.setGridOptions(this.gridOptions);
 		
 		this.plot = new SimplePlot(this.model, this.options);
 		this.plot.setHeight(this.height -5);
@@ -67,26 +77,30 @@ public abstract class BaseGraphPanel extends Composite {
 		this.main.add(plot);
 	}
 	
-	public void addSeries(String label, GraphDataAdapter dps) {
-		if (this.neo_ids.contains(dps.getNeo_id())) {
+	public void addSeries(String label, GraphDataAdapter gda) {
+		if (this.neo_ids.contains(gda.getNeo_id())) {
 			return;
 		}
 
-		for (int i = 0; i< dps.getMarkingSeriesCount(); i++) {
-			Double to = dps.getTo(i);
-			Double from = dps.getFrom(i);
+		for (int i = 0; i< gda.getMarkingSeriesCount(); i++) {
+			Double to = gda.getTo(i);
+			Double from = gda.getFrom(i);
 			Marking m = new Marking();
-			//m.setX(new DoubleRange(from, to));
+			m.setX(new Range(from, to));
+			m.setColor("#ff9900");
+		
+			this.markings.addMarking(m);
 		}
 		
-		for (int i =0; i < dps.getDatapointSeriesCount(); i++) {
+		
+		for (int i =0; i < gda.getDatapointSeriesCount(); i++) {
 			SeriesHandler series = this.model.addSeries(label);
 			
-			TreeMap<Double, Double> hm = dps.getDatapointSeries(i);
+			TreeMap<Double, Double> hm = gda.getDatapointSeries(i);
 			for ( Double index : hm.keySet()) {
 				series.add(new DataPoint(index, hm.get(index)));
 			}
-			this.series_map.put(dps.getNeo_id(), series);
+			this.series_map.put(gda.getNeo_id(), series);
 		}
 	}
 	

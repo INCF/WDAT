@@ -2,10 +2,13 @@ package org.gnode.wda.data;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.TreeMap;
+
+import org.gnode.wda.interfaces.GraphDataAdapter;
 
 import com.google.gwt.json.client.JSONObject;
 
-public class Event extends NeoData{
+public class Event extends NeoData implements GraphDataAdapter {
 	// Attributes
 	private Quantity time;
 	private String label;
@@ -54,5 +57,54 @@ public class Event extends NeoData{
 		JSONObject jtime = obj.get("time").isObject();
 		this.setTime(new Quantity(jtime.get("units").isString().stringValue(),
 								 jtime.get("data").isNumber().doubleValue()));
+	}
+
+	/* Datapoint series stuff */
+	@Override
+	public TreeMap<Double, Double> getDatapointSeries(int index) {
+		// There are no datapoints associated with an event.
+		return null;
+	}
+
+	@Override
+	public int getDatapointSeriesCount() {
+		// There are no datapoints associated with an event
+		return 0;
+	}
+	/* End Datapoint series stuff */
+	
+	
+	/* Marking series functions */
+	@Override
+	public int getMarkingSeriesCount() {
+		// There is only one marking in an epoch
+		return 1;
+	}
+
+	@Override
+	public Double getFrom(int index) {
+		if (index != 0) {
+			return null;
+		}
+		return this.getTime().getData();
+	}
+	@Override
+	public Double getTo(int index) {
+		if (index != 0) {
+			return null;
+		}
+		return this.getTime().getData();
+	}
+	/* End Marking series functions */
+	
+	
+	// Name stuff
+	@Override
+	public String getName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public void setName(String name) {
 	}
 }
