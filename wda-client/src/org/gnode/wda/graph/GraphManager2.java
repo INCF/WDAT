@@ -3,11 +3,13 @@ package org.gnode.wda.graph;
 import java.util.HashMap;
 import java.util.List;
 
+import org.gnode.wda.client.Resources;
 import org.gnode.wda.client.Utilities;
 import org.gnode.wda.data.AnalogSignal;
 import org.gnode.wda.data.Epoch;
 import org.gnode.wda.data.Event;
 import org.gnode.wda.data.IRSAAnalogSignal;
+import org.gnode.wda.data.NeoObject;
 import org.gnode.wda.events.PlottableSelectionEvent;
 import org.gnode.wda.events.PlottableSelectionHandler;
 import org.gnode.wda.interfaces.DataSource;
@@ -43,8 +45,8 @@ public class GraphManager2 implements GraphPresenter,
 	// so declare it as a class property.
 	Integer downsample;
 	
-	//List<String> currentGraphs;
-	// This is not a good idea. There are race conditions involved in async workflows!
+	// List<String> currentGraphs;
+	// REWRITE : This is not a good idea. There are race conditions involved in async workflows!
 	// currentGraphs contains NEO ids of all the graphs that are 
 	// *already* plotted in the graph panels.
 
@@ -136,44 +138,105 @@ public class GraphManager2 implements GraphPresenter,
 		staticg.clear();
 	
 		// request parameter initialization
-		HashMap<String, String> requestData = new HashMap<String, String>();
+		final HashMap<String, String> requestData = new HashMap<String, String>();
 		requestData.put("downsample", "" + this.downsample);
 		
 		// Updating staticg s.
 		for ( final String neo : neo_ids) {
+			final String neo_type = neo.split("_", 2)[0];
+			final String cssColor = Resources.colors.get(neo_ids.indexOf(neo));
+			// this may be used to render unicolored segments
 			
-			this.ds.getData(neo, requestData, new RequestCallback() {
-				@Override
-				public void onResponseReceived(Request request, Response response) {
-					if (response.getStatusCode() == 200) {
-						JSONObject obj = JSONParser.parseLenient(response.getText()).isObject();
+			if (neo_type.equals("segment")) {
+				final String immutable_container_name = neo;
+				// this will later be used to put in the name of the segment being plotted. Since
+				// that action will be done within the callback, needs to be final
+				
+				this.ds.getChildren(neo, new RequestCallback() {
+					@Override
+					public void onError(Request request, Throwable exception) {
+						// TODO Auto-generated method stub
 						
-						GraphDataAdapter dps;
-						String neo_type = neo.split("_", 2)[0];
-						
-						dps = create_dps_of_type(obj, neo_type);
-						
-						if (dps == null) {
-							return;
-						}
-					
-						// Update history, 
-						//historyPanel.addItem(neo, neo.split("_", 1)[0], dps.getName(), true);
-					
-						staticg.addSeries(dps.getName(), dps);
-						staticg.draw();
-						staticg.addSelectionListener(new graphSelectionListener("static"));
 					}
-				}
-				@Override
-				public void onError(Request request, Throwable exception) {
-					// TODO Auto-generated method stub
+					@Override
+					public void onResponseReceived(Request request, Response response) {
+						List<NeoObject> children = ds.parseChildren(response, "segment");
+						String mutable_container_name = immutable_container_name;
+						// this is updated each time
+						
+						for (NeoObject neo : NeoObject.getPlottablesOnly(children)) {
+							String neo_id = neo.getNeo_id();
+							final String neo_type = neo_id.split("_", 2)[0];
+							final String container_name = mutable_container_name;
+							// This will be the actual value used while plotting
+							
+							ds.getData(neo_id, requestData, new RequestCallback() {
+								@Override
+								public void onError(Request request,
+										Throwable exception) {
+									// TODO Auto-genjerated method stub
+									
+								}
+
+								@Override
+								public void onResponseReceived(Request request,
+										Response response) {
+									JSONObject obj = JSONParser.parseLenient(response.getText()).isObject();
+									
+									GraphDataAdapter gda = create_gda_of_type(obj, neo_type);
+									
+									if (gda == null) {
+										return;
+									} 
+									
+									gda.setName(container_name);
+									
+									staticg.addSeries(gda.getName(), gda, cssColor);
+									staticg.draw();
+									staticg.addSelectionListener(new graphSelectionListener("static"));
+								}
+							});
+							
+							mutable_container_name = "";
+						}
+					}
+				});
+			}
+			
+			else {
+				/* 
+				 * Since this is not a container element being plotted, proceed ordinarily.
+				 */
+				this.ds.getData(neo, requestData, new RequestCallback() {
+					@Override
+					public void onResponseReceived(Request request, Response response) {
+						if (response.getStatusCode() == 200) {
+							JSONObject obj = JSONParser.parseLenient(response.getText()).isObject();
+							
+							GraphDataAdapter gda;
+							
+							gda = create_gda_of_type(obj, neo_type);
+							
+							if (gda == null) {
+								return;
+							}
 					
-				}
-			});
+							// update the name as shown in the history panel
+							historyPanel.updateItem(neo, gda.getName());
+							
+							staticg.addSeries(gda.getName(), gda, null);
+							staticg.draw();
+							staticg.addSelectionListener(new graphSelectionListener("static"));
+						}
+					}
+					@Override
+					public void onError(Request request, Throwable exception) {
+						// 	TODO Auto-generated method stub
+						
+					}
+				});
+			}
 		}
-		
-		// Make history widget selections 
 	}
 	
 	private class graphSelectionListener implements SelectionListener {
@@ -201,7 +264,7 @@ public class GraphManager2 implements GraphPresenter,
 				// TODO show loading
 				List<String> currentGraphs = Utilities.parseCSV(Utilities.getOption(History.getToken(), "obj"));
 				
-				HashMap<String, String> requestData = new HashMap<String, String>();
+				final HashMap<String, String> requestData = new HashMap<String, String>();
 				requestData.put("downsample", "" + downsample);
 				requestData.put("start_time", "" + x1);
 				requestData.put("end_time", "" + x2);
@@ -211,7 +274,73 @@ public class GraphManager2 implements GraphPresenter,
 				masterEnd   = x2;
 				
 				
-				for ( final String neo : currentGraphs ) {
+				for (final String neo : currentGraphs ) {
+					String neo_type = neo.split("_",2)[0];
+					
+					if (neo_type.equals("segment")) {
+						final String cssColor = Resources.colors.get(currentGraphs.indexOf(neo));
+						// Will be used to render unicolored segments. 
+						
+						ds.getChildren(neo, new RequestCallback(){
+							@Override
+							public void onError(Request request,
+									Throwable exception) {
+								// TODO Auto-generated method stub
+								
+							}
+
+							@Override
+							public void onResponseReceived(Request request,
+									Response response) {
+								masterg.clear();
+								List<NeoObject> seg_children = ds.parseChildren(response, "segment");
+								String seg_name = neo;
+								String seg_name_to_be_changed = seg_name;
+								
+								for (NeoObject child : seg_children) {
+									String child_neo = child.getNeo_id();
+									final String child_neo_type = child_neo.split("_", 2)[0];
+									final String seg_name_to_be_fed = seg_name_to_be_changed;
+									
+									ds.getData(child_neo, requestData, new RequestCallback() {
+										
+										@Override
+										public void onResponseReceived(Request request, Response response) {
+											
+											JSONObject obj = JSONParser.parseLenient(response.getText()).isObject();
+											
+											GraphDataAdapter gda = create_gda_of_type(obj, child_neo_type);
+											
+											if (gda == null) {
+												return;
+											} 
+											
+											gda.setName(seg_name_to_be_fed);
+											
+											masterg.addSeries(gda.getName(), gda, cssColor);
+											masterg.draw();
+											masterg.addSelectionListener(new graphSelectionListener("master"));
+										}
+										
+										@Override
+										public void onError(Request request, Throwable exception) {
+											// TODO Auto-generated method stub
+											
+										}
+									});
+									
+									seg_name_to_be_changed = "";
+								}
+								
+							}
+						});
+						
+						
+						return; 
+						// To ensure the system doesn't progress into plotting non-container-plottables
+					}
+					
+					
 					ds.getData(neo, requestData, new RequestCallback() {
 						@Override
 						public void onResponseReceived(Request request, Response response) {
@@ -220,11 +349,11 @@ public class GraphManager2 implements GraphPresenter,
 								JSONObject obj = JSONParser.parseLenient(response.getText()).isObject();
 								String neo_type = neo.split("_", 2)[0];
 								
-								dps = create_dps_of_type(obj, neo_type);
+								dps = create_gda_of_type(obj, neo_type);
 								if (dps == null) {
 									return;
 								}
-								masterg.addSeries(dps.getName(), dps);
+								masterg.addSeries(dps.getName(), dps, null);
 								masterg.draw();
 								masterg.addSelectionListener(new graphSelectionListener("master"));
 							}
@@ -247,7 +376,7 @@ public class GraphManager2 implements GraphPresenter,
 				List<String> currentGraphs = Utilities.parseCSV(Utilities.getOption(History.getToken(), "obj"));
 				
 				
-				HashMap<String, String> requestData = new HashMap<String, String>();
+				final HashMap<String, String> requestData = new HashMap<String, String>();
 				requestData.put("downsample", "" + downsample);
 				requestData.put("start_time", "" + x1);
 				requestData.put("end_time", "" + x2);
@@ -257,6 +386,70 @@ public class GraphManager2 implements GraphPresenter,
 				detailEnd	= x2;
 				
 				for ( final String neo : currentGraphs ) {
+					String neo_type = neo.split("_", 2)[0];
+					
+					if (neo_type.equals("segment")) {
+						final String cssColor = Resources.colors.get(currentGraphs.indexOf(neo));
+						// Will be used to render unicolored segments. 
+						
+						ds.getChildren(neo, new RequestCallback(){
+							@Override
+							public void onError(Request request,
+									Throwable exception) {
+								// TODO Auto-generated method stub
+								
+							}
+
+							@Override
+							public void onResponseReceived(Request request,
+									Response response) {
+								detailg.clear();
+								List<NeoObject> seg_children = ds.parseChildren(response, "segment");
+								String seg_name = neo;
+								String seg_name_to_be_changed = seg_name;
+								
+								for (NeoObject child : seg_children) {
+									String child_neo = child.getNeo_id();
+									final String child_neo_type = child_neo.split("_", 2)[0];
+									final String seg_name_to_be_fed = seg_name_to_be_changed;
+									
+									ds.getData(child_neo, requestData, new RequestCallback() {
+										
+										@Override
+										public void onResponseReceived(Request request, Response response) {
+											
+											JSONObject obj = JSONParser.parseLenient(response.getText()).isObject();
+											
+											GraphDataAdapter gda = create_gda_of_type(obj, child_neo_type);
+											
+											if (gda == null) {
+												return;
+											} 
+											
+											gda.setName(seg_name_to_be_fed);
+											
+											detailg.addSeries(gda.getName(), gda, cssColor);
+											detailg.draw();
+											detailg.addSelectionListener(new graphSelectionListener("static"));
+										}
+										
+										@Override
+										public void onError(Request request, Throwable exception) {
+											// TODO Auto-generated method stub
+											
+										}
+									});
+									
+									seg_name_to_be_changed = "";
+								}
+								
+							}
+						});
+						
+						
+						return; 
+						// To ensure the system doesn't progress into plotting non-container-plottables
+					}
 					ds.getData(neo, requestData, new RequestCallback() {
 						@Override
 						public void onResponseReceived(Request request, Response response) {
@@ -265,12 +458,12 @@ public class GraphManager2 implements GraphPresenter,
 								JSONObject obj = JSONParser.parseLenient(response.getText()).isObject();
 								String neo_type = neo.split("_",2)[0];
 								
-								dps = create_dps_of_type(obj, neo_type);
+								dps = create_gda_of_type(obj, neo_type);
 								if (dps == null) {
 									return;
 								}
 								
-								detailg.addSeries(dps.getName(), dps);
+								detailg.addSeries(dps.getName(), dps, null);
 								detailg.draw();
 							}
 						}
@@ -287,7 +480,11 @@ public class GraphManager2 implements GraphPresenter,
 		}
 	}
 	
-	private GraphDataAdapter create_dps_of_type(JSONObject obj, String neo_type) {
+	private GraphDataAdapter create_gda_of_type(JSONObject obj, String neo_type) {
+		/* 
+		 * To be used only for non-container type plottable objects.
+		 */
+		
 		if (neo_type.equals("analogsignal") ) {
 			return new AnalogSignal(obj);
 		} 

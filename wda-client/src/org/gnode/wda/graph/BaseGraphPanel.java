@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.Vector;
 
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -76,25 +75,29 @@ public abstract class BaseGraphPanel extends Composite {
 		
 		this.main.add(plot);
 	}
-	
-	public void addSeries(String label, GraphDataAdapter gda) {
+
+	public void addSeries(String label, GraphDataAdapter gda, String cssColor) {
 		if (this.neo_ids.contains(gda.getNeo_id())) {
 			return;
 		}
 
 		for (int i = 0; i< gda.getMarkingSeriesCount(); i++) {
 			Double to = gda.getTo(i);
-			Double from = gda.getFrom(i);
+			Double from = gda.getFrom(i) ;
 			Marking m = new Marking();
 			m.setX(new Range(from, to));
-			m.setColor("#ff9900");
+			m.setColor("#51967A");
 		
 			this.markings.addMarking(m);
 		}
 		
 		
 		for (int i =0; i < gda.getDatapointSeriesCount(); i++) {
-			SeriesHandler series = this.model.addSeries(label);
+			SeriesHandler series;
+			if (cssColor == null) 
+				series = this.model.addSeries(label);
+			else 
+				series = this.model.addSeries(label, cssColor);
 			
 			TreeMap<Double, Double> hm = gda.getDatapointSeries(i);
 			for ( Double index : hm.keySet()) {

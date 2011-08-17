@@ -54,6 +54,18 @@ public class GraphHistoryWidget extends Composite {
 		this.list.insert((IsWidget)entry, 0);
 	}
 	
+	public void updateItem(String neo_id, String name) {
+		// search for the item.
+		for (int i = 0; i< this.list.getWidgetCount(); i++) {
+			Widget w = this.list.getWidget(i);
+			PlottableEntry p = (PlottableEntry)w;
+			
+			if (p.getNeoId().equals(neo_id)) {
+				p.setLabel(name);
+			}
+		}
+	}
+	
 	private class PlottableEntry extends Composite {
 		private String neo_id;
 		private HorizontalPanel main;
@@ -106,6 +118,10 @@ public class GraphHistoryWidget extends Composite {
 		
 		public String getNeoId() {
 			return this.neo_id;
+		}
+		
+		public void setLabel(String label) {
+			this.name_label.setText(label);
 		}
 	}
 

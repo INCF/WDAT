@@ -87,4 +87,8 @@ public class NeoObject{
 		}
 		return (List<NeoObject>)rtn;
 	}
+
+	public String getNeo_id() {
+		return name;
+	}
 }
