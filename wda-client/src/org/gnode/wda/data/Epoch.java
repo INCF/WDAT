@@ -88,14 +88,12 @@ public class Epoch extends NeoData implements GraphDataAdapter {
 
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
 		return "Epoch";
 	}
 
 	@Override
 	public Double getFrom(int index) {
-		// TODO Auto-generated method stub
-		return this.getTime().getData();
+		return this.convertUnits(this.getTime().getUnits(), "ms", this.getTime().getData());
 	}
 
 	@Override
@@ -106,12 +104,13 @@ public class Epoch extends NeoData implements GraphDataAdapter {
 
 	@Override
 	public Double getTo(int index) {
-		return this.getTime().getData() + this.getDuration().getData();
+		Double a = this.convertUnits(this.getTime().getUnits(), "ms", this.getTime().getData());
+		Double b = this.convertUnits(this.getDuration().getUnits(), "ms", this.getDuration().getData());
+		return a + b;
 	}
 
 	@Override
 	public void setName(String name) {
 		// TODO Auto-generated method stub
-		
 	}
 }

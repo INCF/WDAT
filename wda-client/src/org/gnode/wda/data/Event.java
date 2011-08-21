@@ -86,14 +86,14 @@ public class Event extends NeoData implements GraphDataAdapter {
 		if (index != 0) {
 			return null;
 		}
-		return this.getTime().getData();
+		return this.convertUnits(this.getTime().getUnits(), "ms", this.getTime().getData());
 	}
 	@Override
 	public Double getTo(int index) {
 		if (index != 0) {
 			return null;
 		}
-		return this.getTime().getData();
+		return this.convertUnits(this.getTime().getUnits(), "ms", this.getTime().getData());
 	}
 	/* End Marking series functions */
 	

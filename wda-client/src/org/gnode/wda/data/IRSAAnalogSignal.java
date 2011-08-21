@@ -94,9 +94,12 @@ public class IRSAAnalogSignal extends NeoData implements GraphDataAdapter{
 		TreeMap<Double, Double> tm = new TreeMap<Double, Double>();
 		
 		for (int i = 0; i < this.getTimes().getData().size(); i++) {
+			Double time = this.convertUnits(this.getTimes().getUnits(), "ms", this.getTimes().getData().get(i));
+			Double signal = this.convertUnits(this.getSignal().getUnits(), "mV", this.getSignal().getData().get(i));
+			
 			tm.put(
-				this.getTimes().getData().get(i), 
-				this.getSignal().getData().get(i)
+				time,
+				signal
 			);
 		}
 		

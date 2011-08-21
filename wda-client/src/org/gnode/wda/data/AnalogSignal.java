@@ -109,10 +109,11 @@ public class AnalogSignal extends NeoData implements GraphDataAdapter {
 		
 		TreeMap<Double, Double> hm = new TreeMap<Double, Double>();
 	
-		Double t = this.getT_start().getData();
-		Double t_increment = 1000 / this.getSampling_rate().getData();
+		Double t = this.convertUnits(this.getT_start().getUnits(), "ms", this.getT_start().getData());
+		Double t_increment = 1000 / this.convertUnits(this.getSampling_rate().getUnits(), "Hz", this.getSampling_rate().getData()); 
 		
 		for ( Double point : this.getSignal().getData()) {
+			point = this.convertUnits(this.getSignal().getUnits(), "mV", point);
 			hm.put(t, point );
 			t += t_increment;
 		}
