@@ -46,7 +46,7 @@ public class GraphManager2 implements GraphPresenter,
 	Integer downsample;
 	
 	// List<String> currentGraphs;
-	// REWRITE : This is not a good idea. There are race conditions involved in async workflows!
+	// REWRITE : This is not a good idea. There are race conditions involved in async workflows! REWRITE
 	// currentGraphs contains NEO ids of all the graphs that are 
 	// *already* plotted in the graph panels.
 
@@ -65,11 +65,11 @@ public class GraphManager2 implements GraphPresenter,
 		Integer graphsHeight = Window.getClientHeight() - 50;
 		Integer graphsWidth = Window.getClientWidth() - 300;
 		
-		Integer staticHeight = (int) (0.2 * graphsHeight);
-		Integer masterHeight = (int) (0.25 * graphsHeight);
-		Integer detailHeight = (int) (0.55 * graphsHeight);
+		Integer staticHeight = (int) (Resources.staticRatio * graphsHeight);
+		Integer masterHeight = (int) (Resources.masterRatio * graphsHeight);
+		Integer detailHeight = (int) (Resources.detailRatio * graphsHeight);
 		
-		this.downsample = this.computeDownsample(graphsWidth);
+		this.downsample = Resources.computeDownsample(graphsWidth);
 		
 		this.staticg = new StaticGraphPanel(graphsWidth, staticHeight);
 		this.masterg = new MasterGraphPanel(graphsWidth, masterHeight);
@@ -93,15 +93,7 @@ public class GraphManager2 implements GraphPresenter,
 		
 	}
 
-	public Integer computeDownsample(Integer width) {
-		Integer criticalDownsamling = 1000;
-		
-		if ( width > criticalDownsamling ) {
-			return 1000;
-		}
-		
-		return width;
-	}
+	
 	@Override
 	public void onValueChange(ValueChangeEvent<String> event) {
 		if (Utilities.getOption(event.getValue(), "view").equals("graph") ) {
