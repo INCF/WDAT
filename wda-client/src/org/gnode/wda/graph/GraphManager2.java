@@ -2,6 +2,7 @@ package org.gnode.wda.graph;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.TreeMap;
 
 import org.gnode.wda.client.Resources;
 import org.gnode.wda.client.Utilities;
@@ -17,6 +18,7 @@ import org.gnode.wda.interfaces.GraphDataAdapter;
 import org.gnode.wda.interfaces.GraphPresenter;
 import org.gnode.wda.interfaces.GraphView;
 
+import ca.nanometrics.gflot.client.DataPoint;
 import ca.nanometrics.gflot.client.event.SelectionListener;
 
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -50,6 +52,12 @@ public class GraphManager2 implements GraphPresenter,
 	// currentGraphs contains NEO ids of all the graphs that are 
 	// *already* plotted in the graph panels.
 
+	private HashMap<String, Double> t_starts;
+	private HashMap<String, Double> t_ends;
+	// These maps intend to store the values of analogsignal's times. The values
+	// will be updated only when the static views are being rendered. This is done
+	// because static requests don't supply limiting t parameters so the entire signal
+	// is fetched. This isn't the case in master or detail views. 
 	
 	Double masterStart, masterEnd;
 	Double detailStart, detailEnd;
@@ -86,6 +94,9 @@ public class GraphManager2 implements GraphPresenter,
 		this.detailStart = 0.0;
 		this.masterEnd = 0.0;
 		this.masterStart = 0.0;
+		
+		this.t_ends = new HashMap<String, Double> ();
+		this.t_starts = new HashMap<String, Double>();
 		
 		// Setup listeners and handlers 
 		History.addValueChangeHandler(this);
@@ -157,7 +168,7 @@ public class GraphManager2 implements GraphPresenter,
 						// this is updated each time
 						
 						for (NeoObject neo : NeoObject.getPlottablesOnly(children)) {
-							String neo_id = neo.getNeo_id();
+							final String neo_id = neo.getNeo_id();
 							final String neo_type = neo_id.split("_", 2)[0];
 							final String container_name = mutable_container_name;
 							// This will be the actual value used while plotting
@@ -182,6 +193,19 @@ public class GraphManager2 implements GraphPresenter,
 									} 
 									
 									gda.setName(container_name);
+									
+									// updating the t_starts and t_ends values. Note that only datapoint
+									// series are being used because they are the ones that require t_starts
+									// and t_ends in the requestData
+									if (neo_type.equals("analogsignal") || neo_type.equals("irsaanalogsignal")) {
+										for (int i = 0; i < gda.getDatapointSeriesCount(); i++) {
+											TreeMap<Double, Double> dps = gda.getDatapointSeries(i);
+											
+											Object [] times_array = dps.keySet().toArray();
+											t_starts.put(neo_id, (Double) times_array[0]); // the first element
+											t_ends.put(neo_id, (Double) times_array[times_array.length - 1]); // the last element
+										}
+									}
 									
 									staticg.addSeries(gda.getName(), gda, cssColor);
 									staticg.draw();
@@ -212,7 +236,20 @@ public class GraphManager2 implements GraphPresenter,
 							if (gda == null) {
 								return;
 							}
-					
+							
+							// updating the t_starts and t_ends values. Note that only datapoint
+							// series are being used because they are the ones that require t_starts
+							// and t_ends in the requestData
+							if (neo_type.equals("analogsignal") || neo_type.equals("irsaanalogsignal")) {
+								for (int i = 0; i < gda.getDatapointSeriesCount(); i++) {
+									TreeMap<Double, Double> dps = gda.getDatapointSeries(i);
+									
+									Object [] times_array = dps.keySet().toArray();
+									t_starts.put(neo, (Double) times_array[0]); // the first element
+									t_ends.put(neo, (Double) times_array[times_array.length - 1]); // the last element
+								}
+							}
+							
 							// update the name as shown in the history panel
 							historyPanel.updateItem(neo, gda.getName());
 							
@@ -293,7 +330,11 @@ public class GraphManager2 implements GraphPresenter,
 									String child_neo = child.getNeo_id();
 									final String child_neo_type = child_neo.split("_", 2)[0];
 									final String seg_name_to_be_fed = seg_name_to_be_changed;
-									
+					/*				TODO
+									// updating the requestData params based on the object to be requested. 
+									if (child_neo_type.equals("analogsignal") || child_neo_type.equals("irsaanalogsignal")){
+									}
+					*/				
 									ds.getData(child_neo, requestData, new RequestCallback() {
 										
 										@Override

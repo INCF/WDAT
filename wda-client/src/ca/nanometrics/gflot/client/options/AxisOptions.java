@@ -31,6 +31,7 @@ import com.google.gwt.core.client.JavaScriptObject;
  * @author Alexander De Leon
  */
 public class AxisOptions extends JSONObjectWrapper {
+	@SuppressWarnings("unused")
 	private TickFormatter m_tickFormatter;
 
 	public AxisOptions setMinimum(double min) {
