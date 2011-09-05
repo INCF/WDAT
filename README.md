@@ -9,9 +9,9 @@ to view what WDAT does.
 If more information is required, please contact [Andrey][2] or [Dipanjan][3].
 
 Thanks.
-
-[1] : http://code.google.com/p/google-web-toolkit/
-[2] : mailto:sobolev@biologie.uni-muenchen.de
-[3] : mailto:dipanjan.mu@gmail.com
-
 G-Node @ INCF
+
+[1]: http://code.google.com/p/google-web-toolkit/
+[2]: mailto:sobolev@biologie.uni-muenchen.de
+[3]: mailto:dipanjan.mu@gmail.com
+
