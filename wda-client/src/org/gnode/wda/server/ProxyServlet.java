@@ -145,6 +145,10 @@ public class ProxyServlet extends HttpServlet {
 		
 		// 	Transfer proxy response entity to the servlet response
 		HttpEntity entity = response.getEntity();
+		
+		if (entity == null)
+			return;
+		
 		InputStream input = entity.getContent();
 		OutputStream output = resp.getOutputStream();
 		int b = input.read();
