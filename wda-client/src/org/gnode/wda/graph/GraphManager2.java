@@ -18,7 +18,6 @@ import org.gnode.wda.interfaces.GraphDataAdapter;
 import org.gnode.wda.interfaces.GraphPresenter;
 import org.gnode.wda.interfaces.GraphView;
 
-import ca.nanometrics.gflot.client.DataPoint;
 import ca.nanometrics.gflot.client.event.SelectionListener;
 
 import com.google.gwt.event.logical.shared.ValueChangeEvent;

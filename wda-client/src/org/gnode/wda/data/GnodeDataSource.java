@@ -28,7 +28,6 @@ public class GnodeDataSource implements DataSource{
 	String getObjectDataUrl;
 	String getChildrenUrl;
 	String getParentsUrl;
-	String getTypeUrl;
 	
 	public GnodeDataSource() {
 		String prefix; 				
@@ -43,7 +42,6 @@ public class GnodeDataSource implements DataSource{
 		getObjectDataUrl		= prefix + "neo/data/";
 		getChildrenUrl		= prefix + "neo/children/";
 		getParentsUrl		= prefix + "neo/parents/";
-		getTypeUrl			= prefix + "neo/select/";
 	}
 		
 	@Override
@@ -74,24 +72,31 @@ public class GnodeDataSource implements DataSource{
 	}
 
 	@Override
-	public void getData(String oid, HashMap<String, String> params,
+	public void getData(String full_oid, HashMap<String, String> params,
 			RequestCallback callback) {
 		
 		// Weirdly enough, requestData is not appended to the request. Will 
 		// do so manually
 		String requestData = "";
 		for (String key : params.keySet())
-			requestData += "&" + URL.encode(key) + "=" + URL.encode(params.get(key));
+			requestData += URL.encode(key) + "=" + URL.encode(params.get(key)) + "&";
 		
-		String url = this.getObjectUrl + oid + "/?" + requestData;
+		
+		String type = full_oid.split("_")[0];
+		String oid = full_oid.split("_")[1]; 
+		String url = this.getObjectUrl + type + "/" + oid + "?" + requestData;
+		// Since now we are using the new URL style /neo/analogsignal/12?params
 		
 		
 		this.transport(url, requestData, callback);
 	}
 
 	@Override
-	public void getChildren(String oid, RequestCallback callback) {
-		String url = this.getChildrenUrl + oid + "/";
+	public void getChildren(String full_oid, RequestCallback callback) {
+		String type = full_oid.split("_")[0]; // Extracting block from block_12
+		String oid = full_oid.split("_")[1]; // Extracting 12 from block_12
+		String url = this.getObjectUrl + type + "/" + oid + "/";
+		// Since now the urls are like /neo/block/12 rather than the older /neo/children/block_12
 		String requestData = "";
 		
 		this.transport(url, requestData, callback);
@@ -107,7 +112,8 @@ public class GnodeDataSource implements DataSource{
 
 	@Override
 	public void getType(String type, RequestCallback callback) {
-		String url = this.getTypeUrl + type + "/";
+		String url = this.getObjectUrl + type + "/"; 
+		// Since now the urls are like /neo/block and not the older /neo/select/block 
 		String requestData = "";
 		
 		this.transport(url, requestData, callback);
