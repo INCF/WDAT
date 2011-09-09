@@ -11,6 +11,7 @@ import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -25,6 +26,7 @@ public class AppController implements ValueChangeHandler<String>{
 	 * URL Fragments. 
 	 */
 	DataSource ds;
+	HandlerManager eventBus;
 	ExplorerPresenter explorer;
 	GraphPresenter graph;
 	TabPanel tabs;
@@ -32,8 +34,9 @@ public class AppController implements ValueChangeHandler<String>{
 	
 	public AppController() {
 		this.ds = new GnodeDataSource();
-		this.explorer = new Explorer(ds);
-		this.graph = new GraphManager2(ds);
+		this.eventBus = new HandlerManager(null);
+		this.explorer = new Explorer(ds, eventBus);
+		this.graph = new GraphManager2(ds, eventBus);
 		this.tabs = new TabPanel();
 	}
 
@@ -63,9 +66,9 @@ public class AppController implements ValueChangeHandler<String>{
 			this.tabs.selectTab(0);
 		}
 		
-		History.fireCurrentHistoryState(); // This is required to support page refresh.
-										   // browsers don't fire History change events
-										   // on page refresh.
+		History.fireCurrentHistoryState(); 
+		// To support page refresh. On page refresh, most browsers don't fire 
+		// the history change event. 
 	}
 	
 	public void setupEvents() {

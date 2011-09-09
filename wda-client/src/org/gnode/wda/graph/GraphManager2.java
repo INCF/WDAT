@@ -34,7 +34,7 @@ import com.google.gwt.user.client.Window;
 public class GraphManager2 implements GraphPresenter, 
 									  ValueChangeHandler<String>,
 									  PlottableSelectionHandler {
-	HandlerManager localBus;
+	HandlerManager eventBus;
 	DataSource ds;
 	GraphView dumbView;
 	StaticGraphPanel staticg;
@@ -63,9 +63,9 @@ public class GraphManager2 implements GraphPresenter,
 	// These contain the current selections within the master and detail
 	// panels. 
 	
-	public GraphManager2(DataSource ds) {
+	public GraphManager2(DataSource ds, HandlerManager eventBus) {
 		this.ds = ds;
-		this.localBus = new HandlerManager(null);
+		this.eventBus = eventBus;
 		
 		// Calculate the widths and heights of the graphPanels using 
 		// proportions
@@ -118,7 +118,7 @@ public class GraphManager2 implements GraphPresenter,
 	}
 	@Override
 	public HandlerManager getBus() {
-		return this.localBus ;
+		return this.eventBus ;
 	}
 
 	@Override

@@ -30,7 +30,7 @@ import com.google.gwt.user.client.ui.TreeItem;
  * conveys the event to the top EventBus as defined in the appcontroller class.
  */
 public class Explorer implements ExplorerPresenter, ValueChangeHandler<String> {
-	HandlerManager localBus;
+	HandlerManager eventBus;
 	ExplorerView dumbView; // Named dumbview for reminding me.
 	MainWidget main;
 	TreeWidget tree;
@@ -38,8 +38,8 @@ public class Explorer implements ExplorerPresenter, ValueChangeHandler<String> {
 	//NotificationArea notification;
 	DataSource ds; 
 	
-	public Explorer(DataSource ds) {
-		this.localBus = new HandlerManager(null);
+	public Explorer(DataSource ds, HandlerManager eventBus) {
+		this.eventBus = eventBus;
 	
 		this.ds = ds; 
 		
@@ -108,7 +108,7 @@ public class Explorer implements ExplorerPresenter, ValueChangeHandler<String> {
 	@Override
 	public HandlerManager getBus() {
 		// TODO Auto-generated method stub
-		return this.localBus;
+		return this.eventBus;
 	}
 
 	@Override
